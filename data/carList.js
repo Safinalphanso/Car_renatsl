@@ -7,6 +7,7 @@ export const carList = [
     seaters: '6',
     index:1,
     "4|40":2500,
+    "8|80":5656,
     extraHr:250,
     extraKm:25,
     airport:1800
