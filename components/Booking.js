@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
-import { carList } from "../data/carList";
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
+import { carList } from "../data/carList";
 
 const Booking = ({
   handlebooking,
@@ -19,18 +19,19 @@ const Booking = ({
   rideDistance,
   pickupTime,
 }) => {
-
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [lname, setLname] = useState("");
   const [email, setEmail] = useState("");
   const [bookingDone, setBookingDone] = useState(false);
 
-  // Chauffeur charges and GST calculation
+  // Updated price calculation logic
   const chauffeurCharges = 300; // Chauffeur fee
   const gstRate = 0.05; // GST rate (5%)
-  const chauffeurChargesWithGST = chauffeurCharges + (chauffeurCharges * gstRate); // Calculate GST
-  const finalPrice = Number(Price) + chauffeurChargesWithGST; // Add chauffeur charges to the base price
+  const basePrice = Number(Price);
+  const priceBeforeGST = basePrice + chauffeurCharges;
+  const gstAmount = priceBeforeGST * gstRate;
+  const finalPrice = priceBeforeGST + gstAmount;
   const formattedFinalPrice = finalPrice.toLocaleString("en-IN", {
     style: "currency",
     currency: "INR",
@@ -87,7 +88,7 @@ const Booking = ({
     if (bookingDone) {
       setTimeout(() => {
         window.location.reload(); // Refresh the browser after a certain duration
-      }, 4000); // 3000 milliseconds = 3 seconds
+      }, 4000); // 4000 milliseconds = 4 seconds
     }
   }, [bookingDone]);
 
@@ -128,23 +129,18 @@ const Booking = ({
                 type="number"
                 required
               />
-              {/* <Input
-                placeholder="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-              /> */}
             </InputBoxes>
             <ConfirmBtn type="submit" value="Submit" />
           </InputContainer>
         </div>
         <div className="flex-1 flex flex-col h-full w-full rounded-xl items-center border border-gray-600 justify-center overflow-y-scroll">
-          <div className=" flex flex-col w-full h-full p-2 rounded-xl">
+          <div className="flex flex-col w-full h-full p-2 rounded-xl">
             {bookingDone && (
               <div className="popup-animation h-screen w-screen  flex items-center justify-center">
-                <div className="popup-content bg-white h-52  max-w-lg w-full rounded-lg shadow-md flex flex-col gap-4 items-center justify-center">
+                <div className="popup-content bg-white h-52 max-w-lg w-full rounded-lg shadow-md flex flex-col gap-4 items-center justify-center">
                   <div className="popup-icon h-16 w-16"></div>
-                  <div className="flex flex-col gap-1 items-center justify-center"><h2 className="font-semibold text-[#3BA09A]">Inquiry submitted!!</h2>
+                  <div className="flex flex-col gap-1 items-center justify-center">
+                    <h2 className="font-semibold text-[#3BA09A]">Inquiry submitted!!</h2>
                     <h2 className="text-lg">Kindly lookout for our call.</h2>
                     <h2 className="text-lg">Thank You🙏</h2>
                   </div>
@@ -173,7 +169,7 @@ const Booking = ({
                 <h2 className="flex text-green-700 ">
                   Pickup:- <span className="text-black">{pickup}</span>
                 </h2>
-                <h2 className="flex  text-red-500 gap-2">
+                <h2 className="flex text-red-500 gap-2">
                   Dropoff:- <span className="text-black">{dropoff}</span>
                 </h2>
                 <h2 className="flex gap-2">
@@ -193,8 +189,22 @@ const Booking = ({
             <div className="flex py-2 justify-center items-center w-full font-uber font-semibold text-4xl border-b border-gray-600">
               <h2>{formattedFinalPrice}</h2>
             </div>
+
+            {/* Updated Fare Breakdown Section */}
             <div className="py-2 flex flex-col justify-center items-center gap-3">
-              <h2 className="text-xl font-semibold">Fare Breakup</h2>
+              <h2 className="text-xl font-semibold">Fare Breakdown</h2>
+              <ul className="flex flex-col gap-2">
+                <li>&#x2022; Vehicle Base Price: ₹{basePrice.toLocaleString("en-IN")}</li>
+                <li>&#x2022; Chauffeur Charges: ₹{chauffeurCharges.toLocaleString("en-IN")}</li>
+                <li>&#x2022; Price before GST: ₹{priceBeforeGST.toLocaleString("en-IN")}</li>
+                <li>&#x2022; GST (5%): ₹{gstAmount.toLocaleString("en-IN")}</li>
+                <li>&#x2022; Final Price: {formattedFinalPrice}</li>
+              </ul>
+            </div>
+
+            {/* Updated Additional Information Section */}
+            <div className="py-2 flex flex-col justify-center items-center gap-3">
+              <h2 className="text-xl font-semibold">Additional Information</h2>
               {formType === "OutStation" && tripType === "Round Trip" && (
                 <ul className="flex flex-col gap-2">
                   <li>
@@ -203,69 +213,54 @@ const Booking = ({
                       days +
                       " day/s) " +
                       formattedFinalPrice +
-                      " Excluding 5% GST"}
+                      " Including 5% GST"}
                   </li>
                   <li>
                     &#x2022;{" "}
-                    {"Minimum distance / day "+
-                      "300 Km"}
+                    {"Minimum distance / day " + "300 Km"}
                   </li>
                   <li>
-                    &#x2022;{" "}
-                    {"extra amount per km ₹" +
-                      carList[selectedCar.index].extraKm}
+                    &#x2022; Extra charges driver allowance Day ₹400 / Night (11:00 PM to 5:00 AM) ₹300 
                   </li>
                   <li>
-                    &#x2022; extra charges driver allowance Day ₹400 / Night(11:00 PM to 5:00 AM) ₹300 
+                    &#x2022; Extra Hour Charge: ₹{selectedCar.extraHr} per hour
                   </li>
                   <li>
-                  &#x2022;Opening Time/Km and Closing Time/Km will calculate from Our garage to garage
-                </li>
-                  <li>
-                    &#x2022; All Parking ,Toll ,Border Tax wherever applicable
-                    will be charge on extra
+                    &#x2022; Extra Km Charge: ₹{selectedCar.extraKm} per km
                   </li>
                   <li>
-                    &#x2022; One Day means one calendar day (from midnight 11 to
-                    midnight 11)
+                    &#x2022; Opening/Closing Km & Time will be Calculated from our Garage 
+                  </li>
+                  <li>
+                    &#x2022; The final fare may vary depending on Traffic Conditions, Route Selection & Vehicle Availability.
                   </li>
                 </ul>
               )}
               {formType === "OutStation" && tripType === "One Way" && (
                 <ul className="flex flex-col gap-2">
                   <li>
-                    &#x2022;
-                    {"Outstation (Oneway) ( " +
-                      formattedFinalPrice +
-                      " Excluding 5% GST )"}
+                    &#x2022;{" "}
+                    {"Outstation (One Way) " + formattedFinalPrice + " Including 5% GST"}
                   </li>
                   <li>
                     &#x2022;{" "}
-                    {
-                      "extra amount per km ₹" +
-                      carList[selectedCar.index].extraKm
-                    }
+                    {"Minimum distance " + "300 Km"}
+                  </li>
+                  <li>
+                    &#x2022; Extra Hour Charge: ₹{selectedCar.extraHr} per hour
+                  </li>
+                  <li>
+                    &#x2022; Extra Km Charge: ₹{selectedCar.extraKm} per km
                   </li>
                 </ul>
               )}
               {formType === "Local Transport" && (
                 <ul className="flex flex-col gap-2">
                   <li>
-                    &#x2022;{" "}
-                    {
-                      "Local Transport (" +
-                      Package +
-                      " ) ( " +
-                      formattedFinalPrice +
-                      " Excluding 5% GST )"
-                    }
+                    &#x2022; Extra Hour Charge: ₹{selectedCar.extraHr} per hour
                   </li>
                   <li>
-                    &#x2022;{" "}
-                    {
-                      "extra amount per km ₹" +
-                      carList[selectedCar.index].extraKm
-                    }
+                    &#x2022; Extra Km Charge: ₹{selectedCar.extraKm} per km
                   </li>
                 </ul>
               )}
@@ -278,36 +273,36 @@ const Booking = ({
   );
 };
 
-export default Booking;
-
-const InputContainer = tw.form`
-flex flex-col flex-1 items-center justify-center h-full w-full gap-2 p-4
-`;
-
-const InputBoxes = tw.div`
-flex flex-col items-center justify-center gap-4 w-full
-`;
-
-const Input = tw.input`
-w-full md:w-1/2 p-2 border border-gray-400 rounded-lg
-`;
-
-const ConfirmBtn = tw.input`
-bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded
-`;
-
 const Buttoncon = tw.div`
-absolute top-4 left-4
+  h-12 w-full flex justify-center items-center
 `;
 
 const Back = tw.img`
-w-6 h-6 cursor-pointer
+  w-10 h-10 
+`;
+
+const InputContainer = tw.form`
+  flex flex-col justify-center items-center gap-4 p-4 
+`;
+
+const InputBoxes = tw.div`
+  flex flex-col gap-2
+`;
+
+const Input = tw.input`
+  h-12 w-full border border-gray-400 p-2 rounded-lg
+`;
+
+const ConfirmBtn = tw.input`
+  h-12 w-full bg-[#3BA09A] text-white rounded-lg cursor-pointer
 `;
 
 const CarDetails = tw.div`
-flex flex-col justify-center items-center py-4
+  flex flex-col items-center justify-center text-center p-4
 `;
 
 const Service = tw.h2`
-text-2xl font-semibold
+  text-2xl font-semibold
 `;
+
+export default Booking;

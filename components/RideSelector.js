@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
 import { carList } from "../data/carList";
+import { carList2 } from "../data/carList2";
+
 const RideSelector = ({
   pickupCoordinates,
   dropoffCoordinates,
@@ -17,6 +19,15 @@ const RideSelector = ({
   setDistance,
 }) => {
   const [showPopup, setShowPopup] = useState(false);
+  const [currentCarList, setCurrentCarList] = useState(carList);
+
+  useEffect(() => {
+    if (Package === "4|40") {
+      setCurrentCarList(carList);
+    } else if (Package === "8|80") {
+      setCurrentCarList(carList2);
+    }
+  }, [Package]);
 
   useEffect(() => {
     if (
@@ -31,7 +42,7 @@ const RideSelector = ({
         );
         const data = await response.json();
         const distance = data.routes[0].distance / 1000;
-        if (tripType == "Round Trip") {
+        if (tripType === "Round Trip") {
           setDistance(distance.toFixed(0) * 2);
         } else {
           setDistance(distance.toFixed(0));
@@ -54,24 +65,74 @@ const RideSelector = ({
   return (
     <Wrapper>
       <Carlist>
-        {carList.map((car, index) => (
-          <Car key={index}>
-            <Carimg className={`${car.imgUrl}`}></Carimg>
-            <div className="flex-1 gap-4 flex flex-col justify-evenly items-center md:flex-row">
-              <CarDetails className="flex-1">
-                <Service>{car.service}</Service>
-                <h3 className="text-base text-center">
-                  {car.seaters + " seaters"}
-                </h3>
-              </CarDetails>
-              {formType !== "Airport" && (
-                <Price className=" text-center font-uber">
-                  {"Extra: ₹" + car.extraKm + " /km"}
-                </Price>
-              )}
-              <div className="flex flex-col flex-1 items-center justify-center">
-                <Price className="font-uber">
-                  {Number(
+        {currentCarList
+          .filter(car => car && car.service && car.seaters) // Filter out cars with null values
+          .map((car, index) => (
+            <Car key={index}>
+              <Carimg className={`${car.imgUrl}`}></Carimg>
+              <div className="flex-1 gap-4 flex flex-col justify-evenly items-center md:flex-row">
+                <CarDetails className="flex-1">
+                  <Service>{car.service}</Service>
+                  <h3 className="text-base text-center">
+                    {car.seaters + " seaters"}
+                  </h3>
+                </CarDetails>
+                {formType !== "Airport" && (
+                  <Price className="text-center font-uber">
+                    {"Extra: ₹" + car.extraKm + " /km"}
+                  </Price>
+                )}
+                <div className="flex flex-col flex-1 items-center justify-center">
+                  <Price className="font-uber">
+                    {Number(
+                      formType === "Airport"
+                        ? car.airport
+                        : formType === "Local Transport"
+                        ? car[Package]
+                        : formType === "OutStation"
+                        ? tripType === "Round Trip"
+                          ? (car.extraKm * 300 + 400) * days
+                          : rideDistance >= 500
+                          ? car.extraKm * 300 + 800
+                          : car.extraKm * 300 + 400
+                        : ""
+                    ).toLocaleString("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                    })}
+                  </Price>
+                  <Time
+                    onClick={() => {
+                      setPrice(
+                        Number(
+                          formType === "Airport"
+                            ? car.airport
+                            : formType === "Local Transport"
+                            ? car[Package]
+                            : formType === "OutStation"
+                            ? tripType === "Round Trip"
+                              ? (car.extraKm * 300 + 400) * days
+                              : rideDistance >= 500
+                              ? car.extraKm * 300 + 800
+                              : car.extraKm * 300 + 400
+                            : ""
+                        ).toLocaleString("en-IN", {
+                          style: "currency",
+                          currency: "INR",
+                        })
+                      );
+                      openPopup(car);
+                    }}
+                  >
+                    Fare Details
+                  </Time>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  handlebooking();
+                  openPopup(car);
+                  setPrice(
                     formType === "Airport"
                       ? car.airport
                       : formType === "Local Transport"
@@ -83,67 +144,19 @@ const RideSelector = ({
                         ? car.extraKm * 300 + 800
                         : car.extraKm * 300 + 400
                       : ""
-                  ).toLocaleString("en-IN", {
-                    style: "currency",
-                    currency: "INR",
-                  })}
-                </Price>
-                <Time
-                  onClick={() => {
-                    setPrice(
-                      Number(
-                        formType === "Airport"
-                          ? car.airport
-                          : formType === "Local Transport"
-                          ? car[Package]
-                          : formType === "OutStation"
-                          ? tripType == "Round Trip"
-                            ? (car.extraKm * 300 + 400) * days
-                            : rideDistance >= 500
-                            ? car.extraKm * 300 + 800
-                            : car.extraKm * 300 + 400
-                          : ""
-                      ).toLocaleString("en-IN", {
-                        style: "currency",
-                        currency: "INR",
-                      })
-                    ),
-                      openPopup(car);
-                  }}
-                >
-                  Fare Details
-                </Time>
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                handlebooking(),
-                  openPopup(car),
-                  setPrice(
-                    formType === "Airport"
-                      ? car.airport
-                      : formType === "Local Transport"
-                      ? car[Package]
-                      : formType === "OutStation"
-                      ? tripType == "Round Trip"
-                        ? (car.extraKm * 300 + 400) * days
-                        : rideDistance >= 500
-                        ? car.extraKm * 300 + 800
-                        : car.extraKm * 300 + 400
-                      : ""
                   );
-              }}
-              className="bg-[#0080ff]  shadow-md   text-white rounded-lg text-xl font-medium p-2 book"
-            >
-              Inquire
-            </button>
-          </Car>
-        ))}
+                }}
+                className="bg-[#0080ff] shadow-md text-white rounded-lg text-xl font-medium p-2 book"
+              >
+                Inquire
+              </button>
+            </Car>
+          ))}
       </Carlist>
 
       {showPopup && selectedCar && (
         <Popup>
-          <div className="h-14 text-lg rounded-t-lg flex font-medium justify-center items-center text-white max-w-xl  bg-[#AF302F]  w-full md:w-5/6">
+          <div className="h-14 text-lg rounded-t-lg flex font-medium justify-center items-center text-white max-w-xl bg-[#AF302F] w-full md:w-5/6">
             <h2>Fare Breakup</h2>
           </div>
           <PopupContent>
@@ -177,8 +190,8 @@ const RideSelector = ({
                   from Our garage to garage
                 </li>
                 <li>
-                  &#x2022; All Parking ,Toll ,Border Tax wherever applicable
-                  will be charge on extra
+                  &#x2022; All Parking, Toll, Border Tax wherever applicable
+                  will be charged extra
                 </li>
               </ul>
             )}
@@ -189,8 +202,8 @@ const RideSelector = ({
                   {"Outstation (Oneway) ( " + price + " Excluding 5% GST )"}
                 </li>
                 <li>
-                  &#x2022; All Parking ,Toll ,Border Tax wherever applicable
-                  will be charge on extra
+                  &#x2022; All Parking, Toll, Border Tax wherever applicable
+                  will be charged extra
                 </li>
                 <li>
                   &#x2022;Opening KM/Time and Closing Time/Km will calculate
@@ -246,42 +259,49 @@ const RideSelector = ({
   );
 };
 
-export default RideSelector;
-
 const Wrapper = tw.div`
-flex-1 overflow-y-scroll flex flex-col `;
-
-const Title = tw.div`
-text-gray-500 text-center text-lg font-medium shadow-md py-2 border-b 
+  flex flex-col justify-center items-center w-full
 `;
+
 const Carlist = tw.div`
-overflow-y-scroll h-[100vh] p-2
+  flex flex-col w-full mt-2
 `;
-const Car = tw.button`
-flex p-4 items-center flex-col md:flex-row gap-4 justify-between border border-gray-400 rounded-xl mb-2 w-full shadow-md
-`;
-const Carimg = tw.img`
-w-full md:w-24 aspect-square border rounded-full border
-`;
-const Price = tw.div`
-text-2xl md:text-xl text-center font-medium `;
 
-const Time = tw.div`
-font-xs text-blue-500 cursor-pointer`;
+const Car = tw.div`
+  flex flex-col justify-between p-4 m-2 bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow duration-300
+`;
 
-const Service = tw.div`
-font-bold text-2xl `;
+const Carimg = tw.div`
+  w-full h-24 bg-cover bg-center rounded-lg
+`;
 
 const CarDetails = tw.div`
-flex flex-col justify-center items-center flex-1`;
+  flex-1 flex flex-col justify-center items-start
+`;
+
+const Service = tw.h3`
+  text-lg font-bold
+`;
+
+const Price = tw.h4`
+  text-xl font-medium
+`;
+
+const Time = tw.button`
+  mt-2 bg-[#0080ff] text-white rounded-lg px-4 py-1
+`;
+
 const Popup = tw.div`
-  fixed top-0 left-0 right-0 bottom-0 flex items-center flex-col justify-center bg-black bg-opacity-50 p-2 z-10 text-black
+  fixed inset-0 flex items-center justify-center z-50
+  bg-black bg-opacity-50
 `;
 
 const PopupContent = tw.div`
-  bg-white rounded-b-lg max-w-xl w-full md:w-5/6 h-auto flex justify-center items-center flex-col p-2
+  bg-white rounded-lg shadow-lg p-4 w-full max-w-md
 `;
 
 const CloseButton = tw.button`
-  absolute top-4 right-4 p-2 rounded-full text-black bg-white
+  absolute top-2 right-2 bg-transparent border-none cursor-pointer
 `;
+
+export default RideSelector;
