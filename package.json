@@ -16,11 +16,8 @@
     "@next/font": "^13.4.4",
     "bootstrap": "^5.3.0",
     "firebase": "^9.10.0",
-<<<<<<< HEAD
     "lucide-react": "^0.446.0",
-=======
     "framer-motion": "^11.8.0",
->>>>>>> 8092f0c94fc7e6b456b4594520d1c05048a1867c
     "mapbox-gl": "^2.15.0",
     "next": "^12.3.4",
     "react": "^18.3.1",
