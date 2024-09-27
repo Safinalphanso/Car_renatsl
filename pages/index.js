@@ -10,7 +10,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 export default function Home() {
-  
+
   const [confirm, setconfirm] = useState(false);
   const [search, setSearch] = useState(false);
   const [formType, setFormType] = useState("");
@@ -33,11 +33,11 @@ export default function Home() {
   const getPickupCoordinates = (pickup) => {
     fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${pickup}.json?` +
-        new URLSearchParams({
-          access_token:
-            "pk.eyJ1Ijoic2hhcmlhbiIsImEiOiJjbDg0aGQxNG8wZnhnM25sa3VlYzk1NzVtIn0.BxFbcyCbxdoSXAmSgcS5og",
-          limit: 1,
-        })
+      new URLSearchParams({
+        access_token:
+          "pk.eyJ1Ijoic2hhcmlhbiIsImEiOiJjbDg0aGQxNG8wZnhnM25sa3VlYzk1NzVtIn0.BxFbcyCbxdoSXAmSgcS5og",
+        limit: 1,
+      })
     )
       .then((response) => response.json())
       .then((data) => {
@@ -48,11 +48,11 @@ export default function Home() {
   const getDropoffCoordinates = (dropoff) => {
     fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${dropoff}.json?` +
-        new URLSearchParams({
-          access_token:
-            "pk.eyJ1Ijoic2hhcmlhbiIsImEiOiJjbDg0aGQxNG8wZnhnM25sa3VlYzk1NzVtIn0.BxFbcyCbxdoSXAmSgcS5og",
-          limit: 1,
-        })
+      new URLSearchParams({
+        access_token:
+          "pk.eyJ1Ijoic2hhcmlhbiIsImEiOiJjbDg0aGQxNG8wZnhnM25sa3VlYzk1NzVtIn0.BxFbcyCbxdoSXAmSgcS5og",
+        limit: 1,
+      })
     )
       .then((response) => response.json())
       .then((data) => {
@@ -75,28 +75,29 @@ export default function Home() {
       setTripType("Round Trip");
       setDays("");
       setFormType("");
-      
+
     }
 
   }, [pickup, dropoff, Package, search]);
 
-  useEffect(()=>{
-    if(search){
-    toast.info(
-      "Opening KM/Time and Closing Time/Km will calculate from Our garage to garage",
-      {
-        position: "top-center",
-        autoClose: false,
-        draggablePercent: 20,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      }
-    );}
-  },[search])
+  useEffect(() => {
+    if (search) {
+      toast.info(
+        "Opening KM/Time and Closing Time/Km will calculate from Our garage to garage",
+        {
+          position: "top-center",
+          autoClose: false,
+          draggablePercent: 20,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        }
+      );
+    }
+  }, [search])
   const openPopup = () => {
     setShowPopup(true);
   };
@@ -104,21 +105,20 @@ export default function Home() {
   const closePopup = () => {
     setShowPopup(false);
   };
-  
+
   return (
     <Wrapper className={` ${search && !confirm ? "p-2 h-screen md:flex-row gap-2" : "p-0 h-auto"}`}>
       {!confirm && (
         <>
           <div
             id="scroll"
-            className={`flex flex-col flex-1 gap-8  ${
-              search ? "border rounded-xl" : ""
-            } order-1 md:-order-1 border-gray-600 `}
+            className={`flex flex-col flex-1 gap-8  ${search ? "border rounded-xl" : ""
+              } order-1 md:-order-1 border-gray-600 `}
           >
             {!search && (
               <>
                 <div className="h-screen  flex flex-col">
-                  <Navbar/>
+                  <Navbar />
                   <div className="h-full w-full flex-1 flex items-center justify-center p-2 md:p-4 ">
                     <div className="flex h-full bg rounded-lg w-full flex-col items-center justify-center md:flex-row gap-4 sm:gap-4 sm:p-4 p-2 ">
                       <div
@@ -158,7 +158,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                  <Footer/>
+                <Footer />
               </>
             )}
             {search && (

@@ -11,7 +11,9 @@ const MapContainer = tw.div`
 
 const Map = ({ pickupCoordinates, dropoffCoordinates, Package, formType }) => {
   const mapContainerRef = useRef(null);
-  const packageDistance = Package === "10|100" ? Package.slice(3) : Package.slice(2);
+  const newPackage = Package === "10|100" ? Package.slice(3) : Package.slice(2);
+  const packageDistance = parseInt(newPackage) / 2
+  console.log(packageDistance)
 
   useEffect(() => {
     mapboxgl.accessToken = "pk.eyJ1Ijoic2hhcmlhbiIsImEiOiJjbDg0aGQxNG8wZnhnM25sa3VlYzk1NzVtIn0.BxFbcyCbxdoSXAmSgcS5og"; // Replace with your Mapbox access token
@@ -67,8 +69,8 @@ const Map = ({ pickupCoordinates, dropoffCoordinates, Package, formType }) => {
       const dLat = deg2rad(lat2 - lat1);
       const dLon = deg2rad(lon2 - lon1);
       const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const distance = R * c;
 
@@ -80,9 +82,9 @@ const Map = ({ pickupCoordinates, dropoffCoordinates, Package, formType }) => {
     };
 
     const loadMap = () => {
-      const marker = new mapboxgl.Marker({ color: '#0080FF'}).setLngLat([72.841310, 19.231320])    
-      .setPopup(new mapboxgl.Popup({ closeButton: false })
-      .setHTML(`<h3 style="font-size: 18px">CAR RENTAL</h3>`));
+      const marker = new mapboxgl.Marker({ color: '#0080FF' }).setLngLat([72.841310, 19.231320])
+        .setPopup(new mapboxgl.Popup({ closeButton: false })
+          .setHTML(`<h3 style="font-size: 18px">CAR RENTAL</h3>`));
 
       if ((formType === "OutStation" || formType === "Airport") &&
         pickupCoordinates[0] !== 0 && pickupCoordinates[1] !== 0 &&
@@ -110,7 +112,7 @@ const Map = ({ pickupCoordinates, dropoffCoordinates, Package, formType }) => {
         });
         marker.remove()
       }
-      else{
+      else {
         marker.addTo(map);
         marker.getPopup().addTo(map);
         marker.openPopup();
