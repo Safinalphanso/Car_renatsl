@@ -22,11 +22,7 @@ const RideSelector = ({
   const [currentCarList, setCurrentCarList] = useState(carList);
 
   useEffect(() => {
-    if (Package === "4|40") {
-      setCurrentCarList(carList);
-    } else if (Package === "8|80") {
-      setCurrentCarList(carList2);
-    }
+    setCurrentCarList(Package === "8|80" ? carList2 : carList);
   }, [Package]);
 
   useEffect(() => {
@@ -42,16 +38,12 @@ const RideSelector = ({
         );
         const data = await response.json();
         const distance = data.routes[0].distance / 1000;
-        if (tripType === "Round Trip") {
-          setDistance(distance.toFixed(0) * 2);
-        } else {
-          setDistance(distance.toFixed(0));
-        }
+        setDistance(tripType === "Round Trip" ? distance.toFixed(0) * 2 : distance.toFixed(0));
       };
 
       calculateDistance();
     }
-  }, [pickupCoordinates, dropoffCoordinates, rideDistance, tripType]);
+  }, [pickupCoordinates, dropoffCoordinates, rideDistance, tripType, setDistance]);
 
   const openPopup = (car) => {
     setSelectedCar(car);
@@ -62,246 +54,176 @@ const RideSelector = ({
     setShowPopup(false);
   };
 
+  const calculatePrice = (car) => {
+    if (formType === "Airport") return car.airport;
+    if (formType === "Local Transport") return car[Package];
+    if (formType === "OutStation") {
+      if (tripType === "Round Trip") return (car.extraKm * 300 + 400) * days;
+      return rideDistance >= 500 ? car.extraKm * 300 + 800 : car.extraKm * 300 + 400;
+    }
+    return "";
+  };
+
   return (
     <Wrapper>
-      <Carlist>
+      <CarGrid>
         {currentCarList
-          .filter(car => car && car.service && car.seaters) // Filter out cars with null values
+          .filter(car => car && car.service && car.seaters)
           .map((car, index) => (
-            <Car key={index}>
-              <Carimg className={`${car.imgUrl}`}></Carimg>
-              <div className="flex-1 gap-4 flex flex-col justify-evenly items-center md:flex-row">
-                <CarDetails className="flex-1">
-                  <Service>{car.service}</Service>
-                  <h3 className="text-base text-center">
-                    {car.seaters + " seaters"}
-                  </h3>
-                </CarDetails>
+            <CarCard key={index}>
+              <CarImage className={car.imgUrl} />
+              <CarInfo>
+                <CarService>{car.service}</CarService>
+                <CarSeats>{car.seaters} seaters</CarSeats>
                 {formType !== "Airport" && (
-                  <Price className="text-center font-uber">
-                    {"Extra: ₹" + car.extraKm + " /km"}
-                  </Price>
+                  <ExtraPrice>Extra: ₹{car.extraKm} /km</ExtraPrice>
                 )}
-                <div className="flex flex-col flex-1 items-center justify-center">
-                  <Price className="font-uber">
-                    {Number(
-                      formType === "Airport"
-                        ? car.airport
-                        : formType === "Local Transport"
-                        ? car[Package]
-                        : formType === "OutStation"
-                        ? tripType === "Round Trip"
-                          ? (car.extraKm * 300 + 400) * days
-                          : rideDistance >= 500
-                          ? car.extraKm * 300 + 800
-                          : car.extraKm * 300 + 400
-                        : ""
-                    ).toLocaleString("en-IN", {
-                      style: "currency",
-                      currency: "INR",
-                    })}
-                  </Price>
-                  <Time
-                    onClick={() => {
-                      setPrice(
-                        Number(
-                          formType === "Airport"
-                            ? car.airport
-                            : formType === "Local Transport"
-                            ? car[Package]
-                            : formType === "OutStation"
-                            ? tripType === "Round Trip"
-                              ? (car.extraKm * 300 + 400) * days
-                              : rideDistance >= 500
-                              ? car.extraKm * 300 + 800
-                              : car.extraKm * 300 + 400
-                            : ""
-                        ).toLocaleString("en-IN", {
-                          style: "currency",
-                          currency: "INR",
-                        })
-                      );
-                      openPopup(car);
-                    }}
-                  >
-                    Fare Details
-                  </Time>
-                </div>
-              </div>
-              <button
+                <Price>
+                  {Number(calculatePrice(car)).toLocaleString("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                  })}
+                </Price>
+                <FareDetailsButton onClick={() => {
+                  setPrice(calculatePrice(car));
+                  openPopup(car);
+                }}>
+                  Fare Details
+                </FareDetailsButton>
+              </CarInfo>
+              <InquireButton
                 onClick={() => {
                   handlebooking();
                   openPopup(car);
-                  setPrice(
-                    formType === "Airport"
-                      ? car.airport
-                      : formType === "Local Transport"
-                      ? car[Package]
-                      : formType === "OutStation"
-                      ? tripType === "Round Trip"
-                        ? (car.extraKm * 300 + 400) * days
-                        : rideDistance >= 500
-                        ? car.extraKm * 300 + 800
-                        : car.extraKm * 300 + 400
-                      : ""
-                  );
+                  setPrice(calculatePrice(car));
                 }}
-                className="bg-[#0080ff] shadow-md text-white rounded-lg text-xl font-medium p-2 book"
               >
                 Inquire
-              </button>
-            </Car>
+              </InquireButton>
+            </CarCard>
           ))}
-      </Carlist>
+      </CarGrid>
 
       {showPopup && selectedCar && (
-        <Popup>
-          <div className="h-14 text-lg rounded-t-lg flex font-medium justify-center items-center text-white max-w-xl bg-[#AF302F] w-full md:w-5/6">
-            <h2>Fare Breakup</h2>
-          </div>
+        <PopupOverlay>
           <PopupContent>
+            <PopupHeader>Fare Breakup</PopupHeader>
             <CloseButton onClick={closePopup}>
               <img
                 className="h-4"
                 src="https://img.icons8.com/?size=512&id=46&format=png"
+                alt="Close"
               />
             </CloseButton>
-            {formType === "OutStation" && tripType === "Round Trip" && (
-              <ul className="flex flex-col gap-2">
-                <li>
-                  &#x2022;{" "}
-                  {"Outstation (Roundtrip " +
-                    days +
-                    " day/s) " +
-                    price +
-                    " Excluding 5% GST"}
-                </li>
-                <li>&#x2022; {"Minimum distance / day " + "300 Km"}</li>
-                <li>
-                  &#x2022;{" "}
-                  {"extra amount per km ₹" + carList[selectedCar.index].extraKm}
-                </li>
-                <li>
-                  &#x2022; Driver allowance Day ₹400 / Night(11:00 PM to 5:00
-                  AM) ₹300
-                </li>
-                <li>
-                  &#x2022;Opening KM/Time and Closing Time/Km will calculate
-                  from Our garage to garage
-                </li>
-                <li>
-                  &#x2022; All Parking, Toll, Border Tax wherever applicable
-                  will be charged extra
-                </li>
-              </ul>
-            )}
-            {formType === "OutStation" && tripType === "One Way" && (
-              <ul className="flex flex-col gap-2">
-                <li>
-                  &#x2022;
-                  {"Outstation (Oneway) ( " + price + " Excluding 5% GST )"}
-                </li>
-                <li>
-                  &#x2022; All Parking, Toll, Border Tax wherever applicable
-                  will be charged extra
-                </li>
-                <li>
-                  &#x2022;Opening KM/Time and Closing Time/Km will calculate
-                  from Our garage to garage
-                </li>
-              </ul>
-            )}
-            {formType === "Local Transport" && (
-              <ul className="flex flex-col gap-2">
-                <li>
-                  &#x2022;{" "}
-                  {"Local (" +
-                    Package +
-                    ") : " +
-                    price +
-                    "( Excluding 5 % GST )"}
-                </li>
-                <li>&#x2022; Duration - 1 Day (Toll and parking extra).</li>
-                <li>
-                  &#x2022; {"Extra charge per hour : ₹" + selectedCar.extraHr}
-                </li>
-                <li>
-                  &#x2022; {"Extra charge per km : ₹" + selectedCar.extraKm}
-                </li>
-                <li>
-                  &#x2022;Opening KM/Time and Closing Time/Km will calculate
-                  from Our garage to garage
-                </li>
-              </ul>
-            )}
-            {formType === "Airport" && (
-              <ul className="flex flex-col gap-2">
-                <li>
-                  &#x2022;
-                  {"Airport Transfer (AIRPORTDROP) :" +
-                    price +
-                    "( Excluding 5% GST )"}
-                  ,
-                </li>
-                <li>&#x2022; Toll and parking extra.</li>
-                <li>
-                  &#x2022; {"Extra charge per hour : ₹" + selectedCar.extraHr}
-                </li>
-                <li>
-                  &#x2022; {"Extra charge per km : ₹" + selectedCar.extraKm}
-                </li>
-              </ul>
-            )}
+            <PopupBody>
+              {formType === "OutStation" && tripType === "Round Trip" && (
+                <FareBreakdown>
+                  <li>• Outstation (Roundtrip {days} day/s) {price} Excluding 5% GST</li>
+                  <li>• Minimum distance / day 300 Km</li>
+                  <li>• Extra amount per km ₹{selectedCar.extraKm}</li>
+                  <li>• Driver allowance Day ₹400 / Night(11:00 PM to 5:00 AM) ₹300</li>
+                  <li>• Opening KM/Time and Closing Time/Km will calculate from Our garage to garage</li>
+                  <li>• All Parking, Toll, Border Tax wherever applicable will be charged extra</li>
+                </FareBreakdown>
+              )}
+              {formType === "OutStation" && tripType === "One Way" && (
+                <FareBreakdown>
+                  <li>• Outstation (Oneway) ( {price} Excluding 5% GST )</li>
+                  <li>• All Parking, Toll, Border Tax wherever applicable will be charged extra</li>
+                  <li>• Opening KM/Time and Closing Time/Km will calculate from Our garage to garage</li>
+                </FareBreakdown>
+              )}
+              {formType === "Local Transport" && (
+                <FareBreakdown>
+                  <li>• Local ({Package}) : {price}( Excluding 5 % GST )</li>
+                  <li>• Duration - 1 Day (Toll and parking extra).</li>
+                  <li>• Extra charge per hour : ₹{selectedCar.extraHr}</li>
+                  <li>• Extra charge per km : ₹{selectedCar.extraKm}</li>
+                  <li>• Opening KM/Time and Closing Time/Km will calculate from Our garage to garage</li>
+                </FareBreakdown>
+              )}
+              {formType === "Airport" && (
+                <FareBreakdown>
+                  <li>• Airport Transfer (AIRPORTDROP) :{price}( Excluding 5% GST )</li>
+                  <li>• Toll and parking extra.</li>
+                  <li>• Extra charge per hour : ₹{selectedCar.extraHr}</li>
+                  <li>• Extra charge per km : ₹{selectedCar.extraKm}</li>
+                </FareBreakdown>
+              )}
+            </PopupBody>
           </PopupContent>
-        </Popup>
+        </PopupOverlay>
       )}
     </Wrapper>
   );
 };
 
 const Wrapper = tw.div`
-  flex flex-col justify-center items-center w-full
+  w-full
 `;
 
-const Carlist = tw.div`
-  flex flex-col w-full mt-2
+const CarGrid = tw.div`
+  grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2
 `;
 
-const Car = tw.div`
-  flex flex-col justify-between p-4 m-2 bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow duration-300
+const CarCard = tw.div`
+  flex flex-col bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow duration-300 overflow-hidden
 `;
 
-const Carimg = tw.div`
-  w-full h-24 bg-cover bg-center rounded-lg
+const CarImage = tw.div`
+  w-full h-40 bg-cover bg-center
 `;
 
-const CarDetails = tw.div`
-  flex-1 flex flex-col justify-center items-start
+const CarInfo = tw.div`
+  p-4 flex flex-col flex-grow
 `;
 
-const Service = tw.h3`
-  text-lg font-bold
+const CarService = tw.h3`
+  text-lg font-bold mb-1
+`;
+
+const CarSeats = tw.p`
+  text-sm mb-2
+`;
+
+const ExtraPrice = tw.p`
+  text-sm font-uber mb-2
 `;
 
 const Price = tw.h4`
-  text-xl font-medium
+  text-xl font-medium mb-2
 `;
 
-const Time = tw.button`
-  mt-2 bg-[#0080ff] text-white rounded-lg px-4 py-1
+const FareDetailsButton = tw.button`
+  text-[#0080ff] rounded-lg px-4 py-2 mt-auto
 `;
 
-const Popup = tw.div`
-  fixed inset-0 flex items-center justify-center z-50
-  bg-black bg-opacity-50
+const InquireButton = tw.button`
+  bg-[#0080ff] text-white rounded-lg text-xl font-medium p-2 m-4
+`;
+
+const PopupOverlay = tw.div`
+  fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50
 `;
 
 const PopupContent = tw.div`
-  bg-white rounded-lg shadow-lg p-4 w-full max-w-md
+  bg-white rounded-lg shadow-lg w-full max-w-md relative
+`;
+
+const PopupHeader = tw.div`
+  bg-[#AF302F] text-white text-lg font-medium p-4 rounded-t-lg
 `;
 
 const CloseButton = tw.button`
   absolute top-2 right-2 bg-transparent border-none cursor-pointer
+`;
+
+const PopupBody = tw.div`
+  p-4
+`;
+
+const FareBreakdown = tw.ul`
+  list-disc pl-5 space-y-2
 `;
 
 export default RideSelector;
