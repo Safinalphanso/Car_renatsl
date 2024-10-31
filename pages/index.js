@@ -7,6 +7,8 @@ import Link from "next/link";
 import { BsFillTelephoneFill, BsFacebook, BsLinkedin } from "react-icons/bs";
 import { toast, ToastContainer } from 'react-toastify';
 import Navbar from "../components/Navbar";
+import Fleet from "../components/Fleet";
+import WhyChooseUs from "../components/WhuChooseUS";
 import Footer from "../components/Footer";
 
 export default function Home() {
@@ -158,6 +160,8 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+                <Fleet/>
+                <WhyChooseUs/>
                 <Footer />
               </>
             )}
