@@ -10,19 +10,51 @@ import Navbar from "../components/Navbar";
 import Fleet from "../components/Fleet";
 import WhyChooseUs from "../components/WhuChooseUS";
 import Footer from "../components/Footer";
-import UnifiedBookingForm from "../components/BookingForm";
+
+// Typing Animation Component
+const TypingAnimation = () => {
+  const [text, setText] = useState('');
+  const fullText = 'Rent. Explore. Thrive.';
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (index < fullText.length) {
+      const timeout = setTimeout(() => {
+        setText(current => current + fullText[index]);
+        setIndex(index + 1);
+      }, 150);
+
+      return () => clearTimeout(timeout);
+    } else {
+      const restartTimeout = setTimeout(() => {
+        setText('');
+        setIndex(0);
+      }, 2000);
+
+      return () => clearTimeout(restartTimeout);
+    }
+  }, [index]);
+
+  return (
+    <h1 className="text-[10.7vw] leading-[10.7vw] md:text-[3.7vw] md:leading-[3.7vw] bold text-blue-500">
+      {text}
+      <span className="animate-blink">|</span>
+    </h1>
+  );
+};
 
 export default function Home() {
-
   const [confirm, setconfirm] = useState(false);
   const [search, setSearch] = useState(false);
   const [formType, setFormType] = useState("");
   const [pickupDate, setPickupDate] = useState("");
   const [pickupTime, setPickupTime] = useState("");
   const [days, setDays] = useState("");
+  
   const handleclick = () => {
     setSearch(!search);
   };
+  
   const handleconfirm = () => {
     console.log(formType, pickupDate, pickupTime, pickup, days, dropoff, tripType, Package)
     setconfirm(!confirm);
@@ -31,6 +63,7 @@ export default function Home() {
     }
     setSearch(false)
   };
+  
   const [pickup, setPickup] = useState("");
   const [dropoff, setDropoff] = useState("");
   const [tripType, setTripType] = useState("One Way");
@@ -38,6 +71,7 @@ export default function Home() {
   const [pickupCoordinates, setpickupCoordinates] = useState([0, 0]);
   const [dropoffCoordinates, setdropoffCoordinates] = useState([0, 0]);
   const [showPopup, setShowPopup] = useState(false);
+
   const getPickupCoordinates = (pickup) => {
     fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${pickup}.json?` +
@@ -67,8 +101,8 @@ export default function Home() {
         setdropoffCoordinates(data.features[0].center);
       });
   };
-  useEffect(() => {
 
+  useEffect(() => {
     if (pickup !== "" && dropoff !== "") {
       getPickupCoordinates(pickup);
       getDropoffCoordinates(dropoff);
@@ -84,9 +118,7 @@ export default function Home() {
       setTripType("Round Trip");
       setDays("");
       setFormType("");
-
     }
-
   }, [pickup, dropoff, Package, search]);
 
   useEffect(() => {
@@ -106,7 +138,8 @@ export default function Home() {
         }
       );
     }
-  }, [search])
+  }, [search]);
+
   const openPopup = () => {
     setShowPopup(true);
   };
@@ -116,28 +149,25 @@ export default function Home() {
   };
 
   return (
-    <Wrapper className={` ${search && !confirm ? "p-2 h-screen md:flex-row gap-2" : "p-0 h-auto"}`}>
+    <Wrapper className={`${search && !confirm ? "p-2 h-screen md:flex-row gap-2" : "p-0 h-auto"}`}>
       {!confirm && (
         <>
           <div
             id="scroll"
-            className={`flex flex-col flex-1 gap-8  ${search ? "border rounded-xl" : ""
-              } order-1 md:-order-1 border-gray-600 `}
+            className={`flex flex-col flex-1 gap-8 ${search ? "border rounded-xl" : ""} order-1 md:-order-1 border-gray-600`}
           >
             {!search && (
               <>
-                <div className="h-screen  flex flex-col">
+                <div className="h-screen flex flex-col">
                   <Navbar />
-                  <div className="h-full w-full flex-1 flex items-center justify-center p-2 md:p-4 ">
-                    <div className="flex h-full bg rounded-lg w-full flex-col items-center justify-center md:flex-row gap-4 sm:gap-4 sm:p-4 p-2 ">
+                  <div className="h-full w-full flex-1 flex items-center justify-center p-2 md:p-4">
+                    <div className="flex h-full bg rounded-lg w-full flex-col items-center justify-center md:flex-row gap-4 sm:gap-4 sm:p-4 p-2">
                       <div
                         id="homePage"
                         className="order-1 md:-order-1 flex flex-col gap-6 justify-center items-center w-full md:w-3/6"
                       >
                         <Header>
-                          <UberLogo className="text-center">
-                            Rent. Explore. Thrive.
-                          </UberLogo>
+                          <TypingAnimation />
                         </Header>
                         <Header className="flex flex-col text-2xl font-semibold">
                           <h2 className="text-gray-100 text-center">
@@ -148,60 +178,31 @@ export default function Home() {
                             </span>
                           </h2>
                         </Header>
-                        <ActionButton1
-                          onClick={openPopup}
-                          className="bg-[#0080FF] shadow-md"
-                        >
-                          <Text className="text-white text-2xl font-medium">
-                            Get Started
-                          </Text>
-                          <div className="go flex-1 h-full"></div>
-                        </ActionButton1>
                       </div>
-                      {/* <div
-                        id="herocontent"
-                        className="flex-1 md:flex-[2_2_0%] flex items-center rounded-xl flex-col gap-4"
-                      >
-                        <div className="bg w-full h-full rounded-xl"></div>
-                      </div> */}
-                       <div className="flex justify-center items-center w-full md:w-3/6">
-
-<Search
-  handleclick={handleclick}
-  handleconfirm={handleconfirm}
-  pickup={pickup}
-  setPickup={setPickup}
-  dropoff={dropoff}
-  setDropoff={setDropoff}
-  tripType={tripType}
-  setTripType={setTripType}
-  formType={formType}
-  setFormType={setFormType}
-  setDays={setDays}
-  setPickupDate={setPickupDate}
-  pickupDate={pickupDate}
-  setPickupTime={setPickupTime}
-  setPackage={setPackage}
-/>
- {/* <UnifiedBookingForm 
+                      <div className="flex justify-center items-center w-full md:w-3/6">
+                        <Search
+                          handleclick={handleclick}
                           handleconfirm={handleconfirm}
-                          setFormType={setFormType}
+                          pickup={pickup}
                           setPickup={setPickup}
+                          dropoff={dropoff}
                           setDropoff={setDropoff}
+                          tripType={tripType}
                           setTripType={setTripType}
+                          formType={formType}
+                          setFormType={setFormType}
+                          setDays={setDays}
                           setPickupDate={setPickupDate}
+                          pickupDate={pickupDate}
                           setPickupTime={setPickupTime}
                           setPackage={setPackage}
-                          setDays={setDays}
-                        /> */}
-
-</div>
-
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-                <Fleet/>
-                <WhyChooseUs/>
+                <Fleet />
+                <WhyChooseUs />
                 <Footer />
               </>
             )}
@@ -252,7 +253,7 @@ export default function Home() {
       )}
       {showPopup && (
         <Popup>
-          <div className="h-14 text-lg rounded-t-lg flex font-medium justify-center items-center text-white max-w-md  bg-[#0080FF] w-full md:w-5/6 ">
+          <div className="h-14 text-lg rounded-t-lg flex font-medium justify-center items-center text-white max-w-md bg-[#0080FF] w-full md:w-5/6">
             <h2>Select a option</h2>
           </div>
           <PopupContent>
@@ -264,7 +265,6 @@ export default function Home() {
             </CloseButton>
             <ActionButtons className="items-center">
               <ActionButton
-                className=""
                 onClick={() => {
                   setFormType("OutStation");
                   handleclick();
@@ -275,7 +275,6 @@ export default function Home() {
                 <Text>OutStation</Text>
               </ActionButton>
               <ActionButton
-                className=""
                 onClick={() => {
                   setFormType("Local Transport");
                   handleclick();
@@ -286,7 +285,6 @@ export default function Home() {
                 <Text>Local Transport</Text>
               </ActionButton>
               <ActionButton
-                className=""
                 onClick={() => {
                   setFormType("Airport");
                   handleclick();
@@ -296,7 +294,6 @@ export default function Home() {
                 <ActionButtonImg src="https://img.icons8.com/?size=512&id=akvTP3kbVnLv&format=png" />
                 <Text>Airport(Pickup / dropoff)</Text>
               </ActionButton>
-              {/* <img onClick={()=>{location.href="#contactInfo"}} src="https://img.icons8.com/?size=512&id=41189&format=png" className="h-20 w-20 cursor-pointer my-2"/> */}
             </ActionButtons>
           </PopupContent>
         </Popup>
@@ -321,7 +318,8 @@ export default function Home() {
     </Wrapper>
   );
 }
-//{
+
+// Styled Components
 const Wrapper = tw.div`
   flex flex-col bg-white
 `;
@@ -329,25 +327,21 @@ const Wrapper = tw.div`
 const Header = tw.div`
   flex flex-col justify-between items-center 
 `;
-const UberLogo = tw.h1`
- text-[10.7vw] leading-[10.7vw]  md:text-[3.7vw] md:leading-[3.7vw] bold text-white
-`;
+
 const ActionButtons = tw.div`
   flex justify-center w-full flex-col gap-2
 `;
+
 const ActionButton = tw.button`
  flex w-full font-medium px-4 py-2 shadow-md text-base items-center h-16  justify-between rounded-lg transform hover:scale-105 transition border border-gray-400
 `;
-const ActionButton1 = tw.button`
- flex w-4/6 md:w-3/6 font-medium px-4 py-2 shadow-md text-base items-center h-14  justify-between rounded-lg transform hover:scale-105 transition 
-`;
+
 const Text = tw.span`text-start w-5/6`;
+
 const ActionButtonImg = tw.img`
   h-10 
 `;
-const InputButton = tw.div`
-  h-12 bg-gray-200 text-2xl p-4 flex items-center mt-5 rounded-lg border border-gray-300 font-medium mx-2
-`;
+
 const Popup = tw.div`
   fixed top-0 left-0 right-0 bottom-0 flex items-center flex-col justify-center bg-black bg-opacity-50 p-2 z-10 text-black
 `;
@@ -361,11 +355,9 @@ const CloseButton = tw.button`
 `;
 
 const FloatingCallButton = tw.div`
-md:hidden borber borber-gray-500 flex fixed bottom-6 right-6 p-4 bg-blue-700 rounded-full shadow-lg items-center gap-2 text-white transition-all duration-300
+  md:hidden borber borber-gray-500 flex fixed bottom-6 right-6 p-4 bg-blue-700 rounded-full shadow-lg items-center gap-2 text-white transition-all duration-300
 `;
 
 const FloatingCallIcon = tw(BsFillTelephoneFill)`
   text-2xl
 `;
-
-//}

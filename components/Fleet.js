@@ -61,9 +61,9 @@ const CarFleet = () => {
     },
     // Adding luxury cars
     {
-      imgUrl: 'innova',
-      service: 'Mercedes Benz S-Class',
-      seaters: '4',
+      imgUrl: 'fortuner',
+      service: 'toyota fortuner',
+      seaters: '7',
       index: 6,
       "8|80": 8000,
       extraHr: 800,
@@ -72,36 +72,14 @@ const CarFleet = () => {
       category: 'luxury'
     },
     {
-      imgUrl: 'innova',
-      service: 'Mercedes Benz V-Class',
-      seaters: '6',
-      index: 7,
-      "8|80": 10000,
-      extraHr: 1000,
-      extraKm: 100,
-      airport: 6000,
-      category: 'luxury'
-    },
-    {
-      imgUrl: 'innova',
-      service: 'Audi A6',
-      seaters: '4',
-      index: 8,
-      "8|80": 7000,
-      extraHr: 700,
-      extraKm: 70,
-      airport: 4500,
-      category: 'luxury'
-    },
-    {
-      imgUrl: 'innova',
-      service: 'BMW 5 Series',
-      seaters: '4',
-      index: 9,
-      "8|80": 7500,
-      extraHr: 750,
-      extraKm: 75,
-      airport: 4800,
+      imgUrl: 'hycorss',
+      service: 'innova hycross',
+      seaters: '7',
+      index: 6,
+      "8|80": 8000,
+      extraHr: 800,
+      extraKm: 80,
+      airport: 5000,
       category: 'luxury'
     }
   ];
