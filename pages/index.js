@@ -58,10 +58,7 @@ export default function Home() {
   const handleconfirm = () => {
     console.log(formType, pickupDate, pickupTime, pickup, days, dropoff, tripType, Package)
     setconfirm(!confirm);
-    if(!confirm){
-      setSearch(true)
-    }
-    setSearch(false)
+
   };
   
   const [pickup, setPickup] = useState("");
@@ -71,7 +68,7 @@ export default function Home() {
   const [pickupCoordinates, setpickupCoordinates] = useState([0, 0]);
   const [dropoffCoordinates, setdropoffCoordinates] = useState([0, 0]);
   const [showPopup, setShowPopup] = useState(false);
-
+  const [isSearchHovered, setIsSearchHovered] = useState(false);
   const getPickupCoordinates = (pickup) => {
     fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${pickup}.json?` +
@@ -88,6 +85,7 @@ export default function Home() {
   };
 
   const getDropoffCoordinates = (dropoff) => {
+    console.log("yes")
     fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${dropoff}.json?` +
       new URLSearchParams({
@@ -109,7 +107,7 @@ export default function Home() {
     } else if (pickup !== "" && Package !== "") {
       getPickupCoordinates(pickup);
     }
-    if (search) {
+    if (!search) {
       setpickupCoordinates([0, 0]);
       setdropoffCoordinates([0, 0]);
       setPickup("");
@@ -161,10 +159,27 @@ export default function Home() {
                 <div className="h-screen flex flex-col">
                   <Navbar />
                   <div className="h-full w-full flex-1 flex items-center justify-center p-2 md:p-4">
-                    <div className="flex h-full bg rounded-lg w-full flex-col items-center justify-center md:flex-row gap-4 sm:gap-4 sm:p-4 p-2">
+                    <div 
+                      id="bg" 
+                      className={`relative flex h-full rounded-lg w-full flex-col items-center ${isSearchHovered?"justify-end":"justify-center"} md:flex-row gap-4 sm:gap-4 sm:p-4 p-2`}
+                    >
+                      <div className={`absolute inset-0 transition-opacity duration-500 rounded-lg ${
+                        isSearchHovered ? 'opacity-100' : 'opacity-0'
+                      }`}>
+                        <Map
+                          pickupCoordinates={pickupCoordinates}
+                          dropoffCoordinates={dropoffCoordinates}
+                          Package={Package}
+                          formType={formType}
+                        />
+                      </div>
+                      <div className={`absolute inset-0 bg transition-opacity duration-500 rounded-lg ${
+                        isSearchHovered ? 'opacity-0' : 'opacity-100'
+                      }`} />
+                      
                       <div
                         id="homePage"
-                        className="order-1 md:-order-1 flex flex-col gap-6 justify-center items-center w-full md:w-3/6"
+                        className={`order-1 md:-order-1 ${!isSearchHovered ? "flex":"hidden"} flex-col gap-6 justify-center items-center w-full md:w-3/6 relative z-10`}
                       >
                         <Header>
                           <TypingAnimation />
@@ -179,7 +194,11 @@ export default function Home() {
                           </h2>
                         </Header>
                       </div>
-                      <div className="flex justify-center items-center w-full md:w-3/6">
+                      <div 
+                        className="flex justify-center items-end w-full md:w-3/6 relative z-10"
+                        onMouseEnter={() => setIsSearchHovered(true)}
+                        onMouseLeave={() => setIsSearchHovered(false)}
+                      >
                         <Search
                           handleclick={handleclick}
                           handleconfirm={handleconfirm}
@@ -196,6 +215,11 @@ export default function Home() {
                           pickupDate={pickupDate}
                           setPickupTime={setPickupTime}
                           setPackage={setPackage}
+                          Package={Package}
+                          getPickupCoordinates={getPickupCoordinates}
+                          getDropoffCoordinates={getDropoffCoordinates}
+                          setpickupCoordinates={setpickupCoordinates}
+                          setdropoffCoordinates={setdropoffCoordinates}
                         />
                       </div>
                     </div>
@@ -206,34 +230,8 @@ export default function Home() {
                 <Footer />
               </>
             )}
-            {search && (
-              <Search
-                handleclick={handleclick}
-                handleconfirm={handleconfirm}
-                pickup={pickup}
-                setPickup={setPickup}
-                dropoff={dropoff}
-                setDropoff={setDropoff}
-                tripType={tripType}
-                setTripType={setTripType}
-                formType={formType}
-                setFormType={setFormType}
-                setDays={setDays}
-                setPickupDate={setPickupDate}
-                pickupDate={pickupDate}
-                setPickupTime={setPickupTime}
-                setPackage={setPackage}
-              />
-            )}
           </div>
-          {search && (
-            <Map
-              pickupCoordinates={pickupCoordinates}
-              dropoffCoordinates={dropoffCoordinates}
-              Package={Package}
-              formType={formType}
-            />
-          )}
+
         </>
       )}
       {confirm && (

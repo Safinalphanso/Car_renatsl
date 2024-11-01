@@ -22,7 +22,12 @@ const RideSelector = ({
   const [currentCarList, setCurrentCarList] = useState(carList);
 
   useEffect(() => {
+    if(Package ===""){
+      setCurrentCarList(carList2)
+    }
+    else{
     setCurrentCarList(Package === "8|80" ? carList2 : carList);
+    }
   }, [Package]);
 
   useEffect(() => {
