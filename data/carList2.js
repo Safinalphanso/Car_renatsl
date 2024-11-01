@@ -2,7 +2,7 @@ import react from "react"
 
 export const carList2 = [  
   {
-    imgUrl: 'innova',
+    imgUrl: 'fortuner',
     service: 'Toyota FORTUNER',
     seaters: '6',
     index: 7,
@@ -12,7 +12,7 @@ export const carList2 = [
     airport: 1800
   }, 
   {
-    imgUrl: 'innova',
+    imgUrl: 'hycorss',
     service: 'Toyota HYCROSS',
     seaters: '6',
     index: 6,

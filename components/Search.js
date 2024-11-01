@@ -19,7 +19,12 @@ function Search({
   pickupDate,
   setPickupTime,
   setPackage,
+  Package,
   setDays,
+  getPickupCoordinates,
+  getDropoffCoordinates,
+  setpickupCoordinates,
+  setdropoffCoordinates
 }) {
   const geocodingService = new geocoding({
     accessToken:
@@ -32,6 +37,8 @@ function Search({
   const [currentLocation, setCurrentLocation] = useState("");
   const [pickupInput, setPickupInput] = useState('');
   const [dropoffInput, setDropoffInput] = useState('');
+  const [showPickupSuggestions, setShowPickupSuggestions] = useState(false);
+  const [showDropoffSuggestions, setShowDropoffSuggestions] = useState(false);
   const fetchSuggestions = async (input, setter) => {
     try {
       const response = await geocodingService
@@ -64,6 +71,24 @@ function Search({
   useEffect(()=>{
 setFormType(activeTab)
   },[])
+useEffect(()=>{      setpickupCoordinates([0, 0]);
+  setdropoffCoordinates([0, 0]);
+  setPickup("");
+  setPackage("");
+  setDropoff("");
+  setTripType("Round Trip");
+  setDays("");
+},[activeTab])
+
+  useEffect(() => {
+    if (pickupInput !== "" && dropoffInput !== "") {
+      getPickupCoordinates(pickupInput);
+      getDropoffCoordinates(dropoffInput);
+    } else if (pickupInput !== "" && Package !== "") {
+      getPickupCoordinates(pickupInput);
+    }
+
+  }, [pickupInput, dropoffInput, Package]);
 
   const handleTripTypeChange = (event) => {
     setTripType(event.target.value);
@@ -138,19 +163,42 @@ setFormType(activeTab)
           </button>
         ))}
       </div>
-      <InputContainer >
+      <InputContainer onSubmit={handleconfirmTrip} >
         {formType == "OutStation" && (
           <InputBoxes>
             <div className="flex gap-2">
-              <Input
-                placeholder="Enter pickup location"
-                className="flex-1"
-                value={pickupInput}
-                autoComplete="address-line1"
-                list="pickup-suggestions"
-                onChange={(e) => setPickupInput(e.target.value)}
-                required
-              />
+            <div className="relative w-full">
+  <Input
+    placeholder="Enter pickup location"
+    className="flex-1 w-full"
+    value={pickupInput}
+    autoComplete="address-line1"
+    list="pickup-suggestions"
+    onChange={(e) => {
+      setPickupInput(e.target.value);
+      setShowPickupSuggestions(true);
+    }}
+    required
+  />
+  {showPickupSuggestions && pickupSuggestions.length > 0 && (
+    <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+      {pickupSuggestions.map((suggestion, index) => (
+        <div
+          key={index}
+          className="p-2 hover:bg-gray-100 cursor-pointer"
+          onClick={() => {
+            setPickupInput(suggestion);
+            setPickup(suggestion);
+            setShowPickupSuggestions(false);
+          }}
+        >
+          {suggestion}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
               <button
                 type="button"
                 onClick={getUserCurrentLocation}
@@ -158,26 +206,38 @@ setFormType(activeTab)
               >
                 < MdLocationOn />
               </button></div>
-            <datalist id="pickup-suggestions">
-              {pickupSuggestions.map((suggestion, index) => (
-                <option key={index} value={suggestion} />
-              ))}
-            </datalist>
 
-            <Input
-              placeholder="Where to?"
-              value={dropoffInput}
-              autoComplete="off"
-              list="dropoff-suggestions"
-              onChange={(e) => setDropoffInput(e.target.value)}
-              required
-            />
-
-            <datalist id="dropoff-suggestions">
-              {dropoffSuggestions.map((suggestion, index) => (
-                <option key={index} value={suggestion} />
-              ))}
-            </datalist>
+              <div className="relative w-full">
+  <Input
+    placeholder="Where to?"
+    value={dropoffInput}
+    autoComplete="off"
+    list="dropoff-suggestions"
+    className="w-full"
+    onChange={(e) => {
+      setDropoffInput(e.target.value);
+      setShowDropoffSuggestions(true);
+    }}
+    required
+  />
+  {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
+    <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+      {dropoffSuggestions.map((suggestion, index) => (
+        <div
+          key={index}
+          className="p-2 hover:bg-gray-100 cursor-pointer"
+          onClick={() => {
+            setDropoffInput(suggestion);
+            setDropoff(suggestion);
+            setShowDropoffSuggestions(false);
+          }}
+        >
+          {suggestion}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
             <div className="flex  rounded-md items-center justify-between gap-2">
               <div className="flex flex-1 btn1 p-2  rounded-md items-center justify-center gap-10">
@@ -217,27 +277,27 @@ setFormType(activeTab)
             </div>
 
             {tripType === "Round Trip" && (
-              <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
-                <select
-                  name="days"
-                  className="form-control bg-[#f5f5f5] text-black w-full"
-                  id="duration"
-                  onChange={(e) => setDays(e.target.value)}
-                  required
-                >
-                  <option value="0">Select Number of days</option>
-                  <option value="1">Full Day</option>
-                  <option value="2">2 Days</option>
-                  <option value="3">3 Days</option>
-                  <option value="4">4 Days</option>
-                  <option value="5">5 Days</option>
-                  <option value="6">6 Days</option>
-                  <option value="7">7 Days</option>
-                  <option value="8">8 Days</option>
-                  <option value="9">9 Days</option>
-                  <option value="10">10 Days</option>
-                </select>
-              </div>
+  <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
+  <select
+    name="days"
+    className="form-control bg-[#f5f5f5] text-black w-full"
+    id="duration"
+    onChange={(e) => setDays(e.target.value)}
+    required
+  >
+    <option value="0">Select Number of days</option>
+    <option value="1">Full Day</option>
+    <option value="2">2 Days</option>
+    <option value="3">3 Days</option>
+    <option value="4">4 Days</option>
+    <option value="5">5 Days</option>
+    <option value="6">6 Days</option>
+    <option value="7">7 Days</option>
+    <option value="8">8 Days</option>
+    <option value="9">9 Days</option>
+    <option value="10">10 Days</option>
+  </select>
+</div>
             )}
             <div className="flex  rounded-md items-center justify-between gap-2">
               <div className="flex flex-1 btn1 p-2  rounded-md items-center justify-between gap-2">
@@ -273,15 +333,38 @@ setFormType(activeTab)
         {formType == "Local Transport" && (
           <InputBoxes>
             <div className="flex gap-2">
-              <Input
-                placeholder="Enter pickup location"
-                className="flex-1"
-                value={pickupInput}
-                autoComplete="address-line1"
-                list="pickup-suggestions"
-                onChange={(e) => setPickupInput(e.target.value)}
-                required
-              />
+            <div className="relative w-full">
+  <Input
+    placeholder="Enter pickup location"
+    className="flex-1 w-full"
+    value={pickupInput}
+    autoComplete="address-line1"
+    list="pickup-suggestions"
+    onChange={(e) => {
+      setPickupInput(e.target.value);
+      setShowPickupSuggestions(true);
+    }}
+    required
+  />
+  {showPickupSuggestions && pickupSuggestions.length > 0 && (
+    <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+      {pickupSuggestions.map((suggestion, index) => (
+        <div
+          key={index}
+          className="p-2 hover:bg-gray-100 cursor-pointer"
+          onClick={() => {
+            setPickupInput(suggestion);
+            setPickup(suggestion);
+            setShowPickupSuggestions(false);
+          }}
+        >
+          {suggestion}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+            
               <button
                 type="button"
                 onClick={getUserCurrentLocation}
@@ -289,11 +372,7 @@ setFormType(activeTab)
               >
                 < MdLocationOn />
               </button></div>
-            <datalist id="pickup-suggestions">
-              {pickupSuggestions.map((suggestion, index) => (
-                <option key={index} value={suggestion} />
-              ))}
-            </datalist>
+
 
             <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
               <select
@@ -389,15 +468,37 @@ setFormType(activeTab)
             {tripType === "Drop at Airport" && (
               <>
                 <div className="flex gap-2">
-                  <Input
-                    placeholder="Enter pickup location"
-                    className="flex-1"
-                    value={pickupInput}
-                    autoComplete="address-line1"
-                    list="pickup-suggestions"
-                    onChange={(e) => setPickupInput(e.target.value)}
-                    required
-                  />
+                <div className="relative w-full">
+  <Input
+    placeholder="Enter pickup location"
+    className="flex-1 w-full"
+    value={pickupInput}
+    autoComplete="address-line1"
+    list="pickup-suggestions"
+    onChange={(e) => {
+      setPickupInput(e.target.value);
+      setShowPickupSuggestions(true);
+    }}
+    required
+  />
+  {showPickupSuggestions && pickupSuggestions.length > 0 && (
+    <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+      {pickupSuggestions.map((suggestion, index) => (
+        <div
+          key={index}
+          className="p-2 hover:bg-gray-100 cursor-pointer"
+          onClick={() => {
+            setPickupInput(suggestion);
+            setPickup(suggestion);
+            setShowPickupSuggestions(false);
+          }}
+        >
+          {suggestion}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
                   <button
                     type="button"
                     onClick={getUserCurrentLocation}
@@ -405,11 +506,7 @@ setFormType(activeTab)
                   >
                     < MdLocationOn />
                   </button></div>
-                <datalist id="pickup-suggestions">
-                  {pickupSuggestions.map((suggestion, index) => (
-                    <option key={index} value={suggestion} />
-                  ))}
-                </datalist>
+ 
 
                 <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
                   <select
@@ -449,19 +546,37 @@ setFormType(activeTab)
                     </option>
                   </select>
                 </div>
+
                 <Input
-                  placeholder="Enter location"
-                  value={dropoffInput}
-                  autoComplete="address-line1"
-                  list="pickup-suggestions"
-                  onChange={(e) => setDropoffInput(e.target.value)}
-                  required
-                />
-                <datalist id="pickup-suggestions">
-                  {pickupSuggestions.map((suggestion, index) => (
-                    <option key={index} value={suggestion} />
-                  ))}
-                </datalist>
+    placeholder="Enter location"
+    value={dropoffInput}
+    autoComplete="off"
+    list="dropoff-suggestions"
+    className="w-full"
+    onChange={(e) => {
+      setDropoffInput(e.target.value);
+      setShowDropoffSuggestions(true);
+    }}
+    required
+  />
+  {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
+    <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+      {dropoffSuggestions.map((suggestion, index) => (
+        <div
+          key={index}
+          className="p-2 hover:bg-gray-100 cursor-pointer"
+          onClick={() => {
+            setDropoffInput(suggestion);
+            setDropoff(suggestion);
+            setShowDropoffSuggestions(false);
+          }}
+        >
+          {suggestion}
+        </div>
+      ))}
+    </div>
+  )}
+
               </>
             )}
             <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
@@ -507,7 +622,7 @@ setFormType(activeTab)
             </div>
           </InputBoxes>
         )}
-        <ConfirmBtn onClick={handleconfirmTrip} value="Confirm Location" />
+        <ConfirmBtn type="submit" value="Confirm Location" />
       </InputContainer>
     </Wapper>
   );

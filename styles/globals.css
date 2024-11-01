@@ -84,6 +84,18 @@ body {
   background-position: center center;
   background-size: contain;
 }
+.fortuner {
+  background: url("../asset/fortuner.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+}
+.hycorss {
+  background: url("../asset/hycorss.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+}
 .ertiga {
   background: url("../asset/ertiga.png");
   background-repeat: no-repeat;
