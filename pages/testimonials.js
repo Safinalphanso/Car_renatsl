@@ -35,10 +35,9 @@ const TestimonialsSection = () => {
     <>
       <div className="fixed top-6 left-6 z-50">
         <Link href="/" className="inline-block">
-          <button className="group flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300">
-            <ArrowLeft className="w-5 h-5 text-gray-700 group-hover:text-blue-600 transition-colors" />
-            <span className="text-gray-700 group-hover:text-blue-600 font-medium transition-colors"></span>
-          </button>
+        <button className="group flex items-center justify-center bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300">
+          <ArrowLeft className="w-5 h-5 text-gray-700 group-hover:text-blue-600 transition-colors" />
+        </button>
         </Link>
       </div>
       <section className="py-24 bg-gradient-to-b from-white to-gray-50">
