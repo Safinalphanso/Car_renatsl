@@ -10,6 +10,7 @@ import Navbar from "../components/Navbar";
 import Fleet from "../components/Fleet";
 import WhyChooseUs from "../components/WhuChooseUS";
 import Footer from "../components/Footer";
+import UnifiedBookingForm from "../components/BookingForm";
 
 export default function Home() {
 
@@ -23,7 +24,12 @@ export default function Home() {
     setSearch(!search);
   };
   const handleconfirm = () => {
+    console.log(formType, pickupDate, pickupTime, pickup, days, dropoff, tripType, Package)
     setconfirm(!confirm);
+    if(!confirm){
+      setSearch(true)
+    }
+    setSearch(false)
   };
   const [pickup, setPickup] = useState("");
   const [dropoff, setDropoff] = useState("");
@@ -62,13 +68,14 @@ export default function Home() {
       });
   };
   useEffect(() => {
+
     if (pickup !== "" && dropoff !== "") {
       getPickupCoordinates(pickup);
       getDropoffCoordinates(dropoff);
     } else if (pickup !== "" && Package !== "") {
       getPickupCoordinates(pickup);
     }
-    if (!search) {
+    if (search) {
       setpickupCoordinates([0, 0]);
       setdropoffCoordinates([0, 0]);
       setPickup("");
@@ -157,6 +164,39 @@ export default function Home() {
                       >
                         <div className="bg w-full h-full rounded-xl"></div>
                       </div> */}
+                       <div className="flex justify-center items-center w-full md:w-3/6">
+
+<Search
+  handleclick={handleclick}
+  handleconfirm={handleconfirm}
+  pickup={pickup}
+  setPickup={setPickup}
+  dropoff={dropoff}
+  setDropoff={setDropoff}
+  tripType={tripType}
+  setTripType={setTripType}
+  formType={formType}
+  setFormType={setFormType}
+  setDays={setDays}
+  setPickupDate={setPickupDate}
+  pickupDate={pickupDate}
+  setPickupTime={setPickupTime}
+  setPackage={setPackage}
+/>
+ {/* <UnifiedBookingForm 
+                          handleconfirm={handleconfirm}
+                          setFormType={setFormType}
+                          setPickup={setPickup}
+                          setDropoff={setDropoff}
+                          setTripType={setTripType}
+                          setPickupDate={setPickupDate}
+                          setPickupTime={setPickupTime}
+                          setPackage={setPackage}
+                          setDays={setDays}
+                        /> */}
+
+</div>
+
                     </div>
                   </div>
                 </div>

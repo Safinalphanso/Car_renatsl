@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
 import geocoding from "@mapbox/mapbox-sdk/services/geocoding";
 import { MdDateRange } from "react-icons/md";
-import {  MdLocationOn } from "react-icons/md";
+import { MdLocationOn } from "react-icons/md";
 import { BiTimeFive } from "react-icons/bi";
 function Search({
   handleclick,
@@ -26,9 +26,12 @@ function Search({
       "pk.eyJ1IjoiZ29kaGEiLCJhIjoiY2xpZTh3ZWdoMDhkajNlcGRpZ3l0dTllOSJ9.uaD7_LAOgpJTzlhlRf9u9g",
   });
 
+  const [activeTab, setActiveTab] = useState('OutStation');
   const [pickupSuggestions, setPickupSuggestions] = useState([]);
   const [dropoffSuggestions, setDropoffSuggestions] = useState([]);
   const [currentLocation, setCurrentLocation] = useState("");
+  const [pickupInput, setPickupInput] = useState('');
+  const [dropoffInput, setDropoffInput] = useState('');
   const fetchSuggestions = async (input, setter) => {
     try {
       const response = await geocodingService
@@ -48,16 +51,19 @@ function Search({
   };
 
   useEffect(() => {
-    if (pickup) {
-      fetchSuggestions(pickup, setPickupSuggestions);
+    if (pickupInput) {
+      fetchSuggestions(pickupInput, setPickupSuggestions);
     }
-  }, [pickup]);
+  }, [pickupInput]);
 
   useEffect(() => {
-    if (dropoff) {
-      fetchSuggestions(dropoff, setDropoffSuggestions);
+    if (dropoffInput) {
+      fetchSuggestions(dropoffInput, setDropoffSuggestions);
     }
-  }, [dropoff]);
+  }, [dropoffInput]);
+  useEffect(()=>{
+setFormType(activeTab)
+  },[])
 
   const handleTripTypeChange = (event) => {
     setTripType(event.target.value);
@@ -73,7 +79,7 @@ function Search({
     const confirmAccess = window.confirm(
       "This website wants to access your current location. Allow access?"
     );
-  
+
     if (confirmAccess) {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -108,38 +114,49 @@ function Search({
     }
   };
 
+  const handleconfirmTrip = () => {
+    setPickup(pickupInput)
+    setDropoff(dropoffInput)
+    handleconfirm()
+  }
+
   return (
     <Wapper>
-      <ButtonContainer>
-        <Back
-          src="https://img.icons8.com/ios-filled/50/000000/left.png"
-          onClick={() => {
-            setFormType(0);
-            setDropoff("");
-            setPickup("");
-            handleclick();
-          }}
-        />
-      </ButtonContainer>
-      <InputContainer onSubmit={handleconfirm}>
+
+      <div className="flex mb-6 bg-gray-100 p-1 rounded-lg">
+        {['OutStation', 'Local Transport', 'Airport'].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => {
+              setActiveTab(tab);
+              setFormType(tab);
+            }}
+            className={`flex-1 py-2 rounded-lg ${activeTab === tab ? 'bg-blue-500 text-white' : 'text-gray-700'
+              }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+      <InputContainer >
         {formType == "OutStation" && (
           <InputBoxes>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter pickup location"
-              className="flex-1"
-              value={pickup}
-              autoComplete="address-line1"
-              list="pickup-suggestions"
-              onChange={(e) => setPickup(e.target.value)}
-              required
-            />
-             <button
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter pickup location"
+                className="flex-1"
+                value={pickupInput}
+                autoComplete="address-line1"
+                list="pickup-suggestions"
+                onChange={(e) => setPickupInput(e.target.value)}
+                required
+              />
+              <button
                 type="button"
                 onClick={getUserCurrentLocation}
                 className="bg-blue-500 text-lg text-white px-4 py-2 rounded-md border border-gray-400"
               >
-               < MdLocationOn/>
+                < MdLocationOn />
               </button></div>
             <datalist id="pickup-suggestions">
               {pickupSuggestions.map((suggestion, index) => (
@@ -149,13 +166,13 @@ function Search({
 
             <Input
               placeholder="Where to?"
-              value={dropoff}
+              value={dropoffInput}
               autoComplete="off"
               list="dropoff-suggestions"
-              onChange={(e) => setDropoff(e.target.value)}
+              onChange={(e) => setDropoffInput(e.target.value)}
               required
             />
-           
+
             <datalist id="dropoff-suggestions">
               {dropoffSuggestions.map((suggestion, index) => (
                 <option key={index} value={suggestion} />
@@ -255,22 +272,22 @@ function Search({
         )}
         {formType == "Local Transport" && (
           <InputBoxes>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter pickup location"
-              className="flex-1"
-              value={pickup}
-              autoComplete="address-line1"
-              list="pickup-suggestions"
-              onChange={(e) => setPickup(e.target.value)}
-              required
-            />
-             <button
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter pickup location"
+                className="flex-1"
+                value={pickupInput}
+                autoComplete="address-line1"
+                list="pickup-suggestions"
+                onChange={(e) => setPickupInput(e.target.value)}
+                required
+              />
+              <button
                 type="button"
                 onClick={getUserCurrentLocation}
                 className="bg-blue-500 text-lg text-white px-4 py-2 rounded-md border border-gray-400"
               >
-               < MdLocationOn/>
+                < MdLocationOn />
               </button></div>
             <datalist id="pickup-suggestions">
               {pickupSuggestions.map((suggestion, index) => (
@@ -287,8 +304,8 @@ function Search({
                 required
               >
                 <option value="">Select Package</option>
-                <option value="4|40">4 Hr/ 40 Kilometer</option>
                 <option value="8|80">8 Hr/ 80 Kilometer</option>
+                <option value="12|120">12 Hr/ 120 Kilometer</option>
               </select>
             </div>
 
@@ -340,8 +357,8 @@ function Search({
                     checked={tripType === "Drop at Airport"}
                     onChange={(e) => {
                       handleTripTypeChange(e);
-                      setPickup("");
-                      setDropoff("");
+                      setPickupInput("");
+                      setDropoffInput("");
                     }}
                     required
                   />
@@ -361,8 +378,8 @@ function Search({
                     checked={tripType === "Pickup from Airport"}
                     onChange={(e) => {
                       handleTripTypeChange(e);
-                      setPickup("");
-                      setDropoff("");
+                      setPickupInput("");
+                      setDropoffInput("");
                     }}
                     required
                   />
@@ -371,23 +388,23 @@ function Search({
             </div>
             {tripType === "Drop at Airport" && (
               <>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter pickup location"
-              className="flex-1"
-              value={pickup}
-              autoComplete="address-line1"
-              list="pickup-suggestions"
-              onChange={(e) => setPickup(e.target.value)}
-              required
-            />
-             <button
-                type="button"
-                onClick={getUserCurrentLocation}
-                className="bg-blue-500 text-lg text-white px-4 py-2 rounded-md border border-gray-400"
-              >
-               < MdLocationOn/>
-              </button></div>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Enter pickup location"
+                    className="flex-1"
+                    value={pickupInput}
+                    autoComplete="address-line1"
+                    list="pickup-suggestions"
+                    onChange={(e) => setPickupInput(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={getUserCurrentLocation}
+                    className="bg-blue-500 text-lg text-white px-4 py-2 rounded-md border border-gray-400"
+                  >
+                    < MdLocationOn />
+                  </button></div>
                 <datalist id="pickup-suggestions">
                   {pickupSuggestions.map((suggestion, index) => (
                     <option key={index} value={suggestion} />
@@ -400,7 +417,7 @@ function Search({
                     id="airport_name"
                     required
                     className="form-control bg-[#f5f5f5] text-black w-full"
-                    onChange={(e) => setDropoff(e.target.value)}
+                    onChange={(e) => setDropoffInput(e.target.value)}
                   >
                     <option value="">Select Dropoff location</option>
                     <option value="MUMBAI INTERNATIONAL AIRPORT">
@@ -421,7 +438,7 @@ function Search({
                     id="airport_name"
                     required
                     className="form-control bg-[#f5f5f5] text-black w-full"
-                    onChange={(e) => setPickup(e.target.value)}
+                    onChange={(e) => setPickupInput(e.target.value)}
                   >
                     <option value="">Select Pickup location</option>
                     <option value="MUMBAI INTERNATIONAL AIRPORT">
@@ -434,10 +451,10 @@ function Search({
                 </div>
                 <Input
                   placeholder="Enter location"
-                  value={dropoff}
+                  value={dropoffInput}
                   autoComplete="address-line1"
                   list="pickup-suggestions"
-                  onChange={(e) => setDropoff(e.target.value)}
+                  onChange={(e) => setDropoffInput(e.target.value)}
                   required
                 />
                 <datalist id="pickup-suggestions">
@@ -452,6 +469,7 @@ function Search({
                 className="form-control bg-[#f5f5f5] w-full"
                 name="trip_package"
                 id="trip_package"
+                onChange={(e) => setPackage(e.target.value)}
                 required
               >
                 <option value="">Select Package</option>
@@ -489,7 +507,7 @@ function Search({
             </div>
           </InputBoxes>
         )}
-        <ConfirmBtn type="submit" value="Confirm Location" />
+        <ConfirmBtn onClick={handleconfirmTrip} value="Confirm Location" />
       </InputContainer>
     </Wapper>
   );
@@ -497,7 +515,7 @@ function Search({
 export default Search;
 
 const Wapper = tw.div`
-flex flex-col flex-1 justify-start p-2
+w-full max-w-md bg-white rounded-lg shadow-lg p-6
 `;
 const ButtonContainer = tw.div`
  border-b py-2 mb-2
