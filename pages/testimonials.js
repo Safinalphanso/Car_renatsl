@@ -1,142 +1,115 @@
 import React from "react";
-import Navbar from "../components/Navbar";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Star, ArrowLeft } from "lucide-react";
 
-function Testimonials() {
+const testimonials = [
+  {
+    id: 1,
+    text: "Smooth booking process, friendly staff, and a well-maintained car made my trip unforgettable! Highly recommended!👍",
+    author: "Rahul S.",
+    image: "https://images.pexels.com/photos/1451162/pexels-photo-1451162.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 2,
+    text: "Professional and accommodating team, quick rental process, and a safe, top-notch car for my India visit. Thank you!",
+    author: "Emily G.",
+    image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 3,
+    text: "Memorable family vacation! Excellent customer service, spacious car, and transparent pricing. Highly recommend!",
+    author: "Rajesh K.",
+    image: "https://images.pexels.com/photos/1615776/pexels-photo-1615776.jpeg?auto=compress&cs=tinysrgb&w=600"
+  },
+  {
+    id: 4,
+    text: "Reliable and top-notch service for my frequent business trips to India. Always a pleasure renting from them!",
+    author: "Samantha L.",
+    image: "https://images.pexels.com/photos/810775/pexels-photo-810775.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  }
+];
+
+const TestimonialsSection = () => {
   return (
-    <section className=" body-font">
-      <Navbar />
+    <>
+      <div className="fixed top-6 left-6 z-50">
+        <Link href="/" className="inline-block">
+          <button className="group flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300">
+            <ArrowLeft className="w-5 h-5 text-gray-700 group-hover:text-blue-600 transition-colors" />
+            <span className="text-gray-700 group-hover:text-blue-600 font-medium transition-colors"></span>
+          </button>
+        </Link>
+      </div>
+      <section className="py-24 bg-gradient-to-b from-white to-gray-50">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">What Our Customers Say</h2>
+            <div className="flex items-center justify-center space-x-1">
+              {[...Array(5)].map((_, index) => (
+                <Star key={index} className="w-6 h-6 text-yellow-400 fill-current" />
+              ))}
+              <span className="ml-2 text-2xl font-bold text-gray-900">5.0</span>
+            </div>
+          </motion.div>
 
-      <div class="container px-5 pt-24 mx-auto">
-        <h1 class="text-3xl font-medium title-font text-gray-900 mb-12 text-center">
-          Testimonials
-        </h1>
-        <div class="flex w-full items-center justify-center mb-12">
-        <svg
-          class="w-10 h-10 text-yellow-300 mr-1"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="currentColor"
-          viewBox="0 0 22 20"
-        >
-          <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-        </svg>
-        <p class="ml-2 text-2xl font-bold text-gray-900">5.0</p>
-      </div>
-        <div class="flex flex-wrap -m-4">
-          <div class="p-4 md:w-1/2 w-full">
-            <div class="h-full bg-gray-100 p-8 rounded border shadow-md">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                class="block w-5 h-5 text-gray-400 mb-4"
-                viewBox="0 0 975.036 975.036"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={testimonial.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="group"
               >
-                <path d="M925.036 57.197h-304c-27.6 0-50 22.4-50 50v304c0 27.601 22.4 50 50 50h145.5c-1.9 79.601-20.4 143.3-55.4 191.2-27.6 37.8-69.399 69.1-125.3 93.8-25.7 11.3-36.8 41.7-24.8 67.101l36 76c11.6 24.399 40.3 35.1 65.1 24.399 66.2-28.6 122.101-64.8 167.7-108.8 55.601-53.7 93.7-114.3 114.3-181.9 20.601-67.6 30.9-159.8 30.9-276.8v-239c0-27.599-22.401-50-50-50zM106.036 913.497c65.4-28.5 121-64.699 166.9-108.6 56.1-53.7 94.4-114.1 115-181.2 20.6-67.1 30.899-159.6 30.899-277.5v-239c0-27.6-22.399-50-50-50h-304c-27.6 0-50 22.4-50 50v304c0 27.601 22.4 50 50 50h145.5c-1.9 79.601-20.4 143.3-55.4 191.2-27.6 37.8-69.4 69.1-125.3 93.8-25.7 11.3-36.8 41.7-24.8 67.101l35.9 75.8c11.601 24.399 40.501 35.2 65.301 24.399z"></path>
-              </svg>
-              <p class="leading-relaxed mb-6">
-              Smooth booking process, friendly staff, and a well-maintained car made my trip unforgettable! Highly recommended!👍
-              </p>
-              <a class="inline-flex items-center">
-                <img
-                  alt="testimonial"
-                  src="https://images.pexels.com/photos/1451162/pexels-photo-1451162.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                  class="w-12 h-12 rounded-full flex-shrink-0 object-cover object-center"
-                />
-                <span class="flex-grow flex flex-col pl-4">
-                  <span class="title-font font-medium text-gray-900">
-                  Rahul S.
-                  </span>
-                </span>
-              </a>
-            </div>
-          </div>
-          <div class="p-4 md:w-1/2 w-full">
-            <div class="h-full bg-gray-100 p-8 rounded  border shadow-md">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                class="block w-5 h-5 text-gray-400 mb-4"
-                viewBox="0 0 975.036 975.036"
-              >
-                <path d="M925.036 57.197h-304c-27.6 0-50 22.4-50 50v304c0 27.601 22.4 50 50 50h145.5c-1.9 79.601-20.4 143.3-55.4 191.2-27.6 37.8-69.399 69.1-125.3 93.8-25.7 11.3-36.8 41.7-24.8 67.101l36 76c11.6 24.399 40.3 35.1 65.1 24.399 66.2-28.6 122.101-64.8 167.7-108.8 55.601-53.7 93.7-114.3 114.3-181.9 20.601-67.6 30.9-159.8 30.9-276.8v-239c0-27.599-22.401-50-50-50zM106.036 913.497c65.4-28.5 121-64.699 166.9-108.6 56.1-53.7 94.4-114.1 115-181.2 20.6-67.1 30.899-159.6 30.899-277.5v-239c0-27.6-22.399-50-50-50h-304c-27.6 0-50 22.4-50 50v304c0 27.601 22.4 50 50 50h145.5c-1.9 79.601-20.4 143.3-55.4 191.2-27.6 37.8-69.4 69.1-125.3 93.8-25.7 11.3-36.8 41.7-24.8 67.101l35.9 75.8c11.601 24.399 40.501 35.2 65.301 24.399z"></path>
-              </svg>
-              <p class="leading-relaxed mb-6">
-              Professional and accommodating team, quick rental process, and a safe, top-notch car for my India visit. Thank you!
-              </p>
-              <a class="inline-flex items-center">
-                <img
-                  alt="testimonial"
-                  src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                  class="w-12 h-12 rounded-full flex-shrink-0 object-cover object-center"
-                />
-                <span class="flex-grow flex flex-col pl-4">
-                  <span class="title-font font-medium text-gray-900">
-                  Emily G.
-                  </span>
-                </span>
-              </a>
-            </div>
+                <div className="h-full p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+                  <svg
+                    className="w-8 h-8 text-gray-300 mb-4 group-hover:text-blue-500 transition-colors duration-300"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
+                    <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
+                  </svg>
+                  
+                  <p className="leading-relaxed mb-6 text-gray-600">{testimonial.text}</p>
+                  
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 relative">
+                      <img
+                        alt={`${testimonial.author}'s testimonial`}
+                        src={testimonial.image}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
+                        onError={(e) => {
+                          e.target.src = "/api/placeholder/100/100"; // Fallback image
+                          e.target.onerror = null; // Prevent infinite loop
+                        }}
+                      />
+                    </div>
+                    <div className="ml-4">
+                      <p className="font-medium text-gray-900">{testimonial.author}</p>
+                      <div className="flex mt-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
-        <div class="flex flex-wrap -m-4">
-          <div class="p-4 md:w-1/2 w-full">
-            <div class="h-full bg-gray-100 p-8 rounded border shadow-md">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                class="block w-5 h-5 text-gray-400 mb-4"
-                viewBox="0 0 975.036 975.036"
-              >
-                <path d="M925.036 57.197h-304c-27.6 0-50 22.4-50 50v304c0 27.601 22.4 50 50 50h145.5c-1.9 79.601-20.4 143.3-55.4 191.2-27.6 37.8-69.399 69.1-125.3 93.8-25.7 11.3-36.8 41.7-24.8 67.101l36 76c11.6 24.399 40.3 35.1 65.1 24.399 66.2-28.6 122.101-64.8 167.7-108.8 55.601-53.7 93.7-114.3 114.3-181.9 20.601-67.6 30.9-159.8 30.9-276.8v-239c0-27.599-22.401-50-50-50zM106.036 913.497c65.4-28.5 121-64.699 166.9-108.6 56.1-53.7 94.4-114.1 115-181.2 20.6-67.1 30.899-159.6 30.899-277.5v-239c0-27.6-22.399-50-50-50h-304c-27.6 0-50 22.4-50 50v304c0 27.601 22.4 50 50 50h145.5c-1.9 79.601-20.4 143.3-55.4 191.2-27.6 37.8-69.4 69.1-125.3 93.8-25.7 11.3-36.8 41.7-24.8 67.101l35.9 75.8c11.601 24.399 40.501 35.2 65.301 24.399z"></path>
-              </svg>
-              <p class="leading-relaxed mb-6">
-              Memorable family vacation! Excellent customer service, spacious car, and transparent pricing. Highly recommend!
-              </p>
-              <a class="inline-flex items-center">
-                <img
-                  alt="testimonial"
-                  src="https://images.pexels.com/photos/1615776/pexels-photo-1615776.jpeg?auto=compress&cs=tinysrgb&w=600"
-                  class="w-12 h-12 rounded-full flex-shrink-0 object-cover object-center"
-                />
-                <span class="flex-grow flex flex-col pl-4">
-                  <span class="title-font font-medium text-gray-900">
-                  Rajesh K.
-                  </span>
-                </span>
-              </a>
-            </div>
-          </div>
-          <div class="p-4 md:w-1/2 w-full">
-            <div class="h-full bg-gray-100 p-8 rounded  border shadow-md">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                class="block w-5 h-5 text-gray-400 mb-4"
-                viewBox="0 0 975.036 975.036"
-              >
-                <path d="M925.036 57.197h-304c-27.6 0-50 22.4-50 50v304c0 27.601 22.4 50 50 50h145.5c-1.9 79.601-20.4 143.3-55.4 191.2-27.6 37.8-69.399 69.1-125.3 93.8-25.7 11.3-36.8 41.7-24.8 67.101l36 76c11.6 24.399 40.3 35.1 65.1 24.399 66.2-28.6 122.101-64.8 167.7-108.8 55.601-53.7 93.7-114.3 114.3-181.9 20.601-67.6 30.9-159.8 30.9-276.8v-239c0-27.599-22.401-50-50-50zM106.036 913.497c65.4-28.5 121-64.699 166.9-108.6 56.1-53.7 94.4-114.1 115-181.2 20.6-67.1 30.899-159.6 30.899-277.5v-239c0-27.6-22.399-50-50-50h-304c-27.6 0-50 22.4-50 50v304c0 27.601 22.4 50 50 50h145.5c-1.9 79.601-20.4 143.3-55.4 191.2-27.6 37.8-69.4 69.1-125.3 93.8-25.7 11.3-36.8 41.7-24.8 67.101l35.9 75.8c11.601 24.399 40.501 35.2 65.301 24.399z"></path>
-              </svg>
-              <p class="leading-relaxed mb-6">
-              Reliable and top-notch service for my frequent business trips to India. Always a pleasure renting from them!
-              </p>
-              <a class="inline-flex items-center">
-                <img
-                  alt="testimonial"
-                  src="https://images.pexels.com/photos/810775/pexels-photo-810775.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                  class="w-12 h-12 rounded-full flex-shrink-0 object-cover object-center"
-                />
-                <span class="flex-grow flex flex-col pl-4">
-                  <span class="title-font font-medium text-gray-900">
-                  Samantha L.
-                  </span>
-                </span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
-}
+};
 
-export default Testimonials;
+export default TestimonialsSection;

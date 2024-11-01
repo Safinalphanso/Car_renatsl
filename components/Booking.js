@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect} from "react";
 import tw from "tailwind-styled-components";
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
@@ -25,6 +25,16 @@ const Booking = ({
   const [email, setEmail] = useState("");
   const [bookingDone, setBookingDone] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+
+  useEffect(() => {
+    if (bookingDone) {
+      const timer = setTimeout(() => {
+        setBookingDone(false);
+      }, 1000); // Popup disappears after 5 seconds
+  
+      return () => clearTimeout(timer); // Cleanup on unmount or when bookingDone changes
+    }
+  }, [bookingDone]);
 
   // Price calculation logic (unchanged)
   const chauffeurCharges = 300;

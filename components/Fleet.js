@@ -9,7 +9,7 @@ const CarFleet = () => {
       service: 'Toyota Crysta',
       seaters: '6',
       index: 5,
-      "8|80": 2500,
+      price: 2500,
       extraHr: 250,
       extraKm: 25,
       airport: 1800,
@@ -20,7 +20,7 @@ const CarFleet = () => {
       service: 'Toyota Innova',
       seaters: '6',
       index: 4,
-      "8|80": 2200,
+      price: 2200,
       extraHr: 200,
       extraKm: 20,
       airport: 1800,
@@ -31,7 +31,7 @@ const CarFleet = () => {
       service: 'Maruti Ertiga',
       seaters: '6',
       index: 3,
-      "8|80": 2000,
+      price: 2000,
       extraHr: 180,
       extraKm: 18,
       airport: 1800,
@@ -42,7 +42,7 @@ const CarFleet = () => {
       service: 'Maruti Dzire',
       seaters: '4',
       index: 2,
-      "8|80": 1600,
+      price: 1600,
       extraHr: 140,
       extraKm: 14,
       airport: 1400,
@@ -53,7 +53,7 @@ const CarFleet = () => {
       service: 'Hyundai Xcent',
       seaters: '4',
       index: 1,
-      "8|80": 1600,
+      price: 1600,
       extraHr: 140,
       extraKm: 14,
       airport: 1400,
@@ -61,11 +61,11 @@ const CarFleet = () => {
     },
     // Adding luxury cars
     {
-      imgUrl: 'fortuner',
-      service: 'toyota fortuner',
+      imgUrl: 'fortuner ',
+      service: 'Toyota Fortuner',
       seaters: '7',
       index: 6,
-      "8|80": 8000,
+      price: 8000,
       extraHr: 800,
       extraKm: 80,
       airport: 5000,
@@ -73,10 +73,10 @@ const CarFleet = () => {
     },
     {
       imgUrl: 'hycorss',
-      service: 'innova hycross',
+      service: 'Innova Hycross',
       seaters: '7',
       index: 6,
-      "8|80": 8000,
+      price: 8000,
       extraHr: 800,
       extraKm: 80,
       airport: 5000,
@@ -100,33 +100,18 @@ const CarFleet = () => {
 
       {/* Filter Pills */}
       <div className="flex gap-3 mb-8 overflow-x-auto">
-        <button 
-          onClick={() => setActiveFilter('all')}
-          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-200
-            ${activeFilter === 'all' 
-              ? 'bg-green-100 text-green-800' 
-              : 'hover:bg-gray-100 text-gray-600'}`}
-        >
-          All
-        </button>
-        <button 
-          onClick={() => setActiveFilter('luxury')}
-          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-200
-            ${activeFilter === 'luxury' 
-              ? 'bg-green-100 text-green-800' 
-              : 'hover:bg-gray-100 text-gray-600'}`}
-        >
-          Luxury
-        </button>
-        <button 
-          onClick={() => setActiveFilter('business')}
-          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-200
-            ${activeFilter === 'business' 
-              ? 'bg-green-100 text-green-800' 
-              : 'hover:bg-gray-100 text-gray-600'}`}
-        >
-          Business
-        </button>
+        {['all', 'luxury', 'business'].map(filter => (
+          <button 
+            key={filter}
+            onClick={() => setActiveFilter(prev => prev === filter ? 'all' : filter)}
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-200
+              ${activeFilter === filter 
+                ? 'bg-green-100 text-green-800' 
+                : 'hover:bg-gray-100 text-gray-600'}`}
+          >
+            {filter.charAt(0).toUpperCase() + filter.slice(1)}
+          </button>
+        ))}
       </div>
 
       {/* Horizontal Scrolling Car List */}
@@ -148,7 +133,7 @@ const CarFleet = () => {
                     {car.seaters} Seater
                   </span>
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                    ₹{car['8|80']}/8hrs
+                    ₹{car.price}/8hrs
                   </span>
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 capitalize">
                     {car.category}
@@ -162,9 +147,9 @@ const CarFleet = () => {
 
       {/* Navigation Dots */}
       <div className="flex justify-center items-center gap-2 mt-8">
-        <button className="w-2 h-2 rounded-full bg-gray-900" />
-        <button className="w-2 h-2 rounded-full bg-gray-300" />
-        <button className="w-2 h-2 rounded-full bg-gray-300" />
+        {filteredCars.map((_, index) => (
+          <button key={index} className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-gray-900' : 'bg-gray-300'}`} />
+        ))}
       </div>
     </div>
   );

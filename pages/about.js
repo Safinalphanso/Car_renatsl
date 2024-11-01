@@ -1,131 +1,103 @@
 import React from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-function about() {
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Users, MapPin, Star, Car, ArrowLeft } from "lucide-react";
+
+const stats = [
+  { id: 1, label: "Customers", value: "100+", icon: Users },
+  { id: 2, label: "Locations", value: "3", icon: MapPin },
+  { id: 3, label: "Rating", value: "5.0", icon: Star },
+  { id: 4, label: "Cars", value: "4", icon: Car }
+];
+
+const AboutSection = () => {
   return (
-    <>
-      <Navbar />
-      <main className="profile-page">
-        <section className="relative block" style={{ height: "500px" }}>
-          <div
-            className="absolute top-0 w-full h-full bg-center bg-cover"
-            style={{
-              backgroundImage:
-                "url('https://images.pexels.com/photos/1552224/pexels-photo-1552224.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')",
-            }}
+    <div className="min-h-screen">
+      <div className="relative h-[60vh] bg-black">
+        <div className="fixed top-6 left-6 z-50">
+          <Link href="/" className="inline-block">
+            <button className="group flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300">
+              <ArrowLeft className="w-5 h-5 text-gray-700 group-hover:text-blue-600 transition-colors" />
+              <span className="text-gray-700 group-hover:text-blue-600 font-medium transition-colors"/>
+            </button>
+          </Link>
+        </div>
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.pexels.com/photos/1552224/pexels-photo-1552224.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')",
+            opacity: 0.7
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900" />
+      </div>
+
+      <div className="relative -mt-32 pb-20">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white rounded-2xl shadow-2xl overflow-hidden"
           >
-            <span
-              id="blackOverlay"
-              className="w-full h-full absolute opacity-20 bg-black"
-            ></span>
-          </div>
-          <div
-            className="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden"
-            style={{ height: "70px" }}
-          >
-            <svg
-              className="absolute bottom-0 overflow-hidden"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              version="1.1"
-              viewBox="0 0 2560 100"
-              x="0"
-              y="0"
-            >
-              <polygon
-                className="text-gray-300 fill-current"
-                points="2560 0 2560 100 0 100"
-              ></polygon>
-            </svg>
-          </div>
-        </section>
-        <section className="relative py-16 bg-gray-300">
-          <div className="container mx-auto px-4">
-            <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
-              <div className="px-2 md:px-6">
-                <div className="flex flex-wrap justify-center">
-                  <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
-                    <div className="relative h-[100px] w-[100px] ">
-                      <div className="h-[100px] w-[100px] flex items-center justify-center md:h-[150px] md:w-[150px] shadow-xl bg-white rounded-full  align-middle border-none absolute -top-12 ">
-                        <img
-                          alt="..."
-                          src="https://shariandabre.github.io/CarRental_Master-V2/logo.png"
-                          className="rounded-full w-full h-full"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center hidden md:block">
-                    <div className="px-3 mt-32 sm:mt-0"></div>
-                  </div>
-                  <div className="w-full lg:w-4/12 px-4 lg:order-1 "></div>
-                </div>
-                <section class="text-gray-600 body-font">
-                  <div class="container px-5 py-12 md:py-16 mx-auto">
-                    <div class="flex flex-wrap -m-4 text-center">
-                      <div class="p-4 sm:w-1/4 w-1/2">
-                        <h2 class="title-font font-medium sm:text-4xl text-3xl text-gray-900">
-                          100+
-                        </h2>
-                        <p class="leading-relaxed">Customers</p>
-                      </div>
-                      <div class="p-4 sm:w-1/4 w-1/2">
-                        <h2 class="title-font font-medium sm:text-4xl text-3xl text-gray-900">
-                          3
-                        </h2>
-                        <p class="leading-relaxed">Locations</p>
-                      </div>
-                      <div class="p-4 sm:w-1/4 w-1/2">
-                        <h2 class="title-font font-medium sm:text-4xl text-3xl text-gray-900">
-                          5.0
-                        </h2>
-                        <p class="leading-relaxed">Rating</p>
-                      </div>
-                      <div class="p-4 sm:w-1/4 w-1/2">
-                        <h2 class="title-font font-medium sm:text-4xl text-3xl text-gray-900">
-                          4
-                        </h2>
-                        <p class="leading-relaxed">Cars</p>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-                <div className="text-center mt-12">
-                  <h3 className="text-4xl font-semibold leading-normal mb-2 text-gray-800">
-                    Car Rental
-                  </h3>
-                  <div className="text-sm leading-normal mt-0 mb-2 text-gray-500 font-bold uppercase">
-                    <i className="fas fa-map-marker-alt mr-2 text-lg text-gray-500"></i>
-                    Borivali West
-                  </div>
-                </div>
-                <div className="mt-10 py-10 border-t border-gray-300 text-center">
-                  <div className="flex flex-wrap justify-center">
-                    <div className="w-full lg:w-9/12 px-1 md:px-4">
-                      <p className="mb-4 text-lg leading-relaxed text-gray-800">
-                        <span className="font-black text-black">Welcome to RCR - Your Car Rental Solution</span> Since 2015,
-                        we have been your go-to platform for finding the best rates for car rentals. Our seamless booking
-                        process ensures instant confirmation, making your travel
-                        planning a breeze. Client satisfaction is our top
-                        priority, with dedicated support to assist you.
-                        Embracing innovation, we set new standards for
-                        excellence in the industry. Join our community of
-                        satisfied travelers and experience the RCR difference.
-                        Let us be your reliable travel companion on your next
-                        adventure. Contact us today and embark on a journey
-                        tailored to you. At RCR, its more than just renting a
-                        car; its creating unforgettable memories.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+            <div className="relative -mt-16 flex justify-center">
+              <div className="w-32 h-32 rounded-full bg-white p-2 shadow-xl">
+                <img
+                  src="/api/placeholder/128/128"
+                  alt="Logo"
+                  className="w-full h-full rounded-full object-cover"
+                />
               </div>
             </div>
-          </div>
-        </section>
-      </main>
-    </>
-  );
-}
 
-export default about;
+            <div className="px-6 py-12">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                {stats.map((stat, index) => (
+                  <motion.div
+                    key={stat.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    className="text-center"
+                  >
+                    <div className="flex justify-center mb-4">
+                      <stat.icon className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <h3 className="text-4xl font-bold text-gray-900 mb-2">{stat.value}</h3>
+                    <p className="text-gray-600">{stat.label}</p>
+                  </motion.div>
+                ))}
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-center"
+              >
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">Car Rental</h2>
+                <div className="flex items-center justify-center space-x-2 text-gray-600 mb-8">
+                  <MapPin className="w-5 h-5" />
+                  <span>Borivali West</span>
+                </div>
+
+                <div className="max-w-3xl mx-auto">
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    <span className="font-bold text-gray-900">Welcome to RCR - Your Car Rental Solution</span>
+                    <br /><br />
+                    Since 2015, we have been your go-to platform for finding the best rates for car rentals. Our seamless booking process ensures instant confirmation, making your travel planning a breeze. Client satisfaction is our top priority, with dedicated support to assist you.
+                    <br /><br />
+                    Embracing innovation, we set new standards for excellence in the industry. Join our community of satisfied travelers and experience the RCR difference. Let us be your reliable travel companion on your next adventure. Contact us today and embark on a journey tailored to you. At RCR, it's more than just renting a car; it's creating unforgettable memories.
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AboutSection;

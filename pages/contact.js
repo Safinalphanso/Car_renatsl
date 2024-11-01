@@ -1,60 +1,80 @@
-import Link from "next/link";
 import React, { useState } from "react";
-import tw from "tailwind-styled-components";
+import { MapPin, Phone, Mail, Clock, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import Map from "../components/Map";
-const Contact = () => {
-  const [Package, setPackage] = useState("");
-  const [pickupCoordinates, setpickupCoordinates] = useState([0, 0]);
-  const [dropoffCoordinates, setdropoffCoordinates] = useState([0, 0]);
+
+const ContactSection = () => {
+  const [coordinates, setCoordinates] = useState({
+    pickup: [0, 0],
+    dropoff: [0, 0]
+  });
   const [formType, setFormType] = useState("");
+  const [packageType, setPackageType] = useState("");
+
+  const contactInfo = {
+    address: "123, Sunshine Apartments, Hill Road, Bandra West, Mumbai - 400050, Maharashtra, India",
+    hours: "Open 24 hours",
+    phone: "80109 55252",
+    email: "carrental@gmail.com"
+  };
+
   return (
-    <div className=" flex flex-col h-screen w-full ">
-      <Buttoncon>
-        <Link href="/">
-          <Back src="https://img.icons8.com/ios-filled/50/000000/left.png" />
-        </Link>
-      </Buttoncon>
-      <div className="flex-1 h-full w-full flex justify-center items-center">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Link href="/" className="fixed top-4 left-4 z-50">
+        <button className="p-2 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <ArrowLeft className="w-6 h-6 text-gray-700" />
+        </button>
+      </Link>
+
+      <div className="h-[40vh] relative">
         <Map
-          pickupCoordinates={pickupCoordinates}
-          dropoffCoordinates={dropoffCoordinates}
-          Package={Package}
+          pickupCoordinates={coordinates.pickup}
+          dropoffCoordinates={coordinates.dropoff}
+          Package={packageType}
           formType={formType}
         />
       </div>
-      <div className="flex-[2_2_0%] flex flex-col md:flex-row md:flex-1 h-full">
-        <div className="flex-1 h-full bg-[#232323] text-white ">
-          <h2 className="text-4xl md:text-6xl w-full h-2/6 text-center p-2 font-bold">
-            Meet Us
-          </h2>
-          <div className="flex flex-col gap-1 justify-center items-center">
-            <h2 className="text-xl md:text-2xl font-bold">Address:</h2>
-            <h2 className="text-xl md:text-2xl font-medium text-center w-5/6">
-              123, Sunshine Apartments, Hill Road, Bandra West, Mumbai - 400050,
-              Maharashtra, India
-            </h2>
+
+      <div className="flex-1 grid md:grid-cols-2 gap-8 p-8">
+        <div className="bg-gray-900 text-white rounded-2xl p-8 shadow-xl">
+          <h2 className="text-3xl font-bold mb-8">Visit Us</h2>
+          <div className="space-y-6">
+            <div className="flex items-start space-x-4">
+              <MapPin className="w-6 h-6 mt-1 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold mb-2">Address</h3>
+                <p className="text-gray-300">{contactInfo.address}</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex-1 h-full">
-          <h2 className="text-4xl md:text-6xl w-full h-2/6 text-center p-2 font-bold">
-            Call Us
-          </h2>
-          <div className="flex gap-4 justify-center items-center">
-            <h2 className="text-xl md:text-2xl font-bold">Hours:</h2>
-            <h2 className="text-xl md:text-2xl font-medium text-center">
-              Open 24 hours
-            </h2>
-          </div>
-          <div className="flex gap-4 justify-center items-center mt-4">
-            <h2 className="text-xl md:text-2xl font-bold">Phone:</h2>
-            <h2 className="text-xl md:text-2xl font-medium text-center">
-              80109 55252            </h2>
-          </div>
-          <div className="flex gap-4 justify-center items-center mt-4">
-            <h2 className="text-xl md:text-2xl font-bold">Email:</h2>
-            <h2 className="text-xl md:text-2xl font-medium text-center">
-              carrental@gamil.com
-            </h2>
+
+        <div className="bg-white rounded-2xl p-8 shadow-xl">
+          <h2 className="text-3xl font-bold mb-8">Contact Us</h2>
+          <div className="space-y-6">
+            <div className="flex items-center space-x-4">
+              <Clock className="w-6 h-6 text-blue-600" />
+              <div>
+                <h3 className="font-semibold mb-1">Hours</h3>
+                <p className="text-gray-600">{contactInfo.hours}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <Phone className="w-6 h-6 text-blue-600" />
+              <div>
+                <h3 className="font-semibold mb-1">Phone</h3>
+                <p className="text-gray-600">{contactInfo.phone}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <Mail className="w-6 h-6 text-blue-600" />
+              <div>
+                <h3 className="font-semibold mb-1">Email</h3>
+                <p className="text-gray-600">{contactInfo.email}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -62,11 +82,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
-
-const Back = tw.img`
-h-8 cursor-pointer 
-`;
-const Buttoncon = tw.div`
-flex w-8 rounded-full bg-white fixed z-10 m-2 shadow-md cursor-pointer
-`;
+export default ContactSection;
