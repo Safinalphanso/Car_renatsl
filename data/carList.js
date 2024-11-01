@@ -42,7 +42,7 @@ export const carList = [
     airport: 1400
   },
   {
-    imgUrl: 'dzire',
+    imgUrl: 'xcent',
     service: 'Hyundai Xcent',
     seaters: '4',
     index: 1,
