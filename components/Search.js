@@ -68,10 +68,13 @@ function Search({
       fetchSuggestions(dropoffInput, setDropoffSuggestions);
     }
   }, [dropoffInput]);
+
   useEffect(()=>{
 setFormType(activeTab)
   },[])
-useEffect(()=>{      setpickupCoordinates([0, 0]);
+
+useEffect(()=>{      
+  setpickupCoordinates([0, 0]);
   setdropoffCoordinates([0, 0]);
   setPickup("");
   setPackage("");

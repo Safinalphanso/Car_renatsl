@@ -107,16 +107,7 @@ export default function Home() {
     } else if (pickup !== "" && Package !== "") {
       getPickupCoordinates(pickup);
     }
-    if (!search) {
-      setpickupCoordinates([0, 0]);
-      setdropoffCoordinates([0, 0]);
-      setPickup("");
-      setPackage("");
-      setDropoff("");
-      setTripType("Round Trip");
-      setDays("");
-      setFormType("");
-    }
+
   }, [pickup, dropoff, Package, search]);
 
   useEffect(() => {
