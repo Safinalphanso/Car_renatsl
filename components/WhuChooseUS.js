@@ -6,28 +6,28 @@ const features = [
     id: 1,
     icon: Phone,
     title: 'Easy Online Booking',
-    description: 'Lorem ipsum is simply dummy text of the printing and typesetting industry.',
+    description: 'MCR is simply dummy text of the printing and typesetting industry.',
     backgroundColor: 'blueBg'
   },
   {
     id: 2,
     icon: User,
     title: 'Professional Drivers',
-    description: 'Lorem ipsum is simply dummy text of the printing and typesetting industry.',
+    description: 'MCR is simply dummy text of the printing and typesetting industry.',
     backgroundColor: 'blackBg'
   },
   {
     id: 3,
     icon: Car,
     title: 'Variety of Car Brands',
-    description: 'Lorem ipsum is simply dummy text of the printing and typesetting industry.',
+    description: 'MCR is simply dummy text of the printing and typesetting industry.',
     backgroundColor: 'blueBg'
   },
   {
     id: 4,
     icon: CreditCard,
     title: 'Online Payment',
-    description: 'Lorem ipsum is simply dummy text of the printing and typesetting industry.',
+    description: 'MCR is simply dummy text of the printing and typesetting industry.',
     backgroundColor: 'blackBg'
   },
 ];
@@ -37,7 +37,7 @@ const WhyChooseUs = () => {
     <section className="whyChooseUs">
       <h2>Why Choose Us</h2>
       <p className="description">
-        At LMVC we pride ourselves in delivering extensive services to fulfill all of your needs with first-rate customer care.
+        At MCR we pride ourselves in delivering extensive services to fulfill all of your needs with first-rate customer care.
       </p>
       <div className="featuresGrid">
         {features.map(feature => (
