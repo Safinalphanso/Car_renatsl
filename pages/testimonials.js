@@ -83,7 +83,7 @@ const TestimonialsSection = () => {
                   
                   <div className="flex items-center">
                     <div className="w-12 h-12 relative">
-                      <img
+                      <Image
                         alt={`${testimonial.author}&apos;s testimonial`}
                         src={testimonial.image}
                         className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
