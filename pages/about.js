@@ -42,7 +42,7 @@ const AboutSection = () => {
           >
             <div className="relative -mt-16 flex justify-center">
               <div className="w-32 h-32 rounded-full bg-white p-2 shadow-xl">
-                <img
+                <Img
                   src="/api/placeholder/128/128"
                   alt="Logo"
                   className="w-full h-full rounded-full object-cover"

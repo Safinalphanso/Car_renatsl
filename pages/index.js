@@ -50,17 +50,8 @@ export default function Home() {
   const [pickupDate, setPickupDate] = useState("");
   const [pickupTime, setPickupTime] = useState("");
   const [days, setDays] = useState("");
-  
-  const handleclick = () => {
-    setSearch(!search);
-  };
-  
-  const handleconfirm = () => {
-    console.log(formType, pickupDate, pickupTime, pickup, days, dropoff, tripType, Package)
-    setconfirm(!confirm);
-
-  };
-  
+  const [isMapFixed, setIsMapFixed] = useState(false);
+  const [isSearchHovered, setIsSearchHovered] = useState(false);
   const [pickup, setPickup] = useState("");
   const [dropoff, setDropoff] = useState("");
   const [tripType, setTripType] = useState("One Way");
@@ -68,7 +59,16 @@ export default function Home() {
   const [pickupCoordinates, setpickupCoordinates] = useState([0, 0]);
   const [dropoffCoordinates, setdropoffCoordinates] = useState([0, 0]);
   const [showPopup, setShowPopup] = useState(false);
-  const [isSearchHovered, setIsSearchHovered] = useState(false);
+
+  const handleclick = () => {
+    setSearch(!search);
+  };
+
+  const handleconfirm = () => {
+    console.log(formType, pickupDate, pickupTime, pickup, days, dropoff, tripType, Package);
+    setconfirm(!confirm);
+  };
+
   const getPickupCoordinates = (pickup) => {
     fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${pickup}.json?` +
@@ -85,7 +85,6 @@ export default function Home() {
   };
 
   const getDropoffCoordinates = (dropoff) => {
-    console.log("yes")
     fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${dropoff}.json?` +
       new URLSearchParams({
@@ -107,7 +106,6 @@ export default function Home() {
     } else if (pickup !== "" && Package !== "") {
       getPickupCoordinates(pickup);
     }
-
   }, [pickup, dropoff, Package, search]);
 
   useEffect(() => {
@@ -152,10 +150,21 @@ export default function Home() {
                   <div className="h-full w-full flex-1 flex items-center justify-center p-2 md:p-4">
                     <div 
                       id="bg" 
-                      className={`relative flex h-full rounded-lg w-full flex-col items-center ${isSearchHovered?"justify-end":"justify-center"} md:flex-row gap-4 sm:gap-4 sm:p-4 p-2`}
+                      className={`relative flex h-full rounded-lg w-full flex-col items-center ${isSearchHovered || isMapFixed ? "justify-end":"justify-center"} md:flex-row gap-4 sm:gap-4 sm:p-4 p-2`}
                     >
+                      {/* Map Toggle Button */}
+                      <button
+                        onClick={() => setIsMapFixed(!isMapFixed)}
+                        className="absolute top-4 right-4 z-20 bg-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-100 transition-colors duration-200 flex items-center gap-2"
+                      >
+                        <span className="material-icons">
+                          {isMapFixed ? 'map_off' : 'map'}
+                        </span>
+                        {isMapFixed ? "Hide Map" : "Show Map"}
+                      </button>
+
                       <div className={`absolute inset-0 transition-opacity duration-500 rounded-lg ${
-                        isSearchHovered ? 'opacity-100' : 'opacity-0'
+                        isSearchHovered || isMapFixed ? 'opacity-100' : 'opacity-0'
                       }`}>
                         <Map
                           pickupCoordinates={pickupCoordinates}
@@ -165,12 +174,12 @@ export default function Home() {
                         />
                       </div>
                       <div className={`absolute inset-0 bg transition-opacity duration-500 rounded-lg ${
-                        isSearchHovered ? 'opacity-0' : 'opacity-100'
+                        isSearchHovered || isMapFixed ? 'opacity-0' : 'opacity-100'
                       }`} />
                       
                       <div
                         id="homePage"
-                        className={`order-1 md:-order-1 ${!isSearchHovered ? "flex":"hidden"} flex-col gap-6 justify-center items-center w-full md:w-3/6 relative z-10`}
+                        className={`order-1 md:-order-1 ${!isSearchHovered && !isMapFixed ? "flex":"hidden"} flex-col gap-6 justify-center items-center w-full md:w-3/6 relative z-10`}
                       >
                         <Header>
                           <TypingAnimation />
@@ -187,8 +196,8 @@ export default function Home() {
                       </div>
                       <div 
                         className="flex justify-center items-end w-full md:w-3/6 relative z-10"
-                        onMouseEnter={() => setIsSearchHovered(true)}
-                        onMouseLeave={() => setIsSearchHovered(false)}
+                        onMouseEnter={() => !isMapFixed && setIsSearchHovered(true)}
+                        onMouseLeave={() => !isMapFixed && setIsSearchHovered(false)}
                       >
                         <Search
                           handleclick={handleclick}
@@ -222,7 +231,6 @@ export default function Home() {
               </>
             )}
           </div>
-
         </>
       )}
       {confirm && (
