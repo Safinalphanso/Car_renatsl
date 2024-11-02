@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { Users, MapPin, Star, Car, ArrowLeft } from "lucide-react";
 
 const stats = [
@@ -16,9 +17,9 @@ const AboutSection = () => {
       <div className="relative h-[60vh] bg-black">
         <div className="fixed top-6 left-6 z-50">
           <Link href="/" className="inline-block">
-          <button className="group flex items-center justify-center bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300">
-            <ArrowLeft className="w-5 h-5 text-gray-700 group-hover:text-blue-600 transition-colors" />
-          </button>
+            <button className="group flex items-center justify-center bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300">
+              <ArrowLeft className="w-5 h-5 text-gray-700 group-hover:text-blue-600 transition-colors" />
+            </button>
           </Link>
         </div>
         <div
@@ -42,10 +43,12 @@ const AboutSection = () => {
           >
             <div className="relative -mt-16 flex justify-center">
               <div className="w-32 h-32 rounded-full bg-white p-2 shadow-xl">
-                <Img
+                <Image
                   src="/api/placeholder/128/128"
                   alt="Logo"
                   className="w-full h-full rounded-full object-cover"
+                  width={128}
+                  height={128}
                 />
               </div>
             </div>
@@ -85,9 +88,9 @@ const AboutSection = () => {
                   <p className="text-lg text-gray-700 leading-relaxed">
                     <span className="font-bold text-gray-900">Welcome to RCR - Your Car Rental Solution</span>
                     <br /><br />
-                    Since 2015, we have been your go-to platform for finding the best rates for car rentals. Our seamless booking process ensures instant confirmation, making your travel planning a breeze. Client satisfaction is our top priority, with dedicated support to assist you.
+                    Since 2015, we&apos;ve been your go-to platform for finding the best rates for car rentals. Our seamless booking process ensures instant confirmation, making your travel planning a breeze. Client satisfaction is our top priority, with dedicated support to assist you.
                     <br /><br />
-                    Embracing innovation, we set new standards for excellence in the industry. Join our community of satisfied travelers and experience the RCR difference. Let us be your reliable travel companion on your next adventure. Contact us today and embark on a journey tailored to you. At RCR, it's more than just renting a car; it's creating unforgettable memories.
+                    Embracing innovation, we set new standards for excellence in the industry. Join our community of satisfied travelers and experience the RCR difference. Let us be your reliable travel companion on your next adventure. Contact us today and embark on a journey tailored to you. At RCR, it&apos;s more than just renting a car; it&apos;s creating unforgettable memories.
                   </p>
                 </div>
               </motion.div>
