@@ -289,7 +289,8 @@ const ActionButton = tw.button`
 
 const Text = tw.span`text-start w-5/6`;
 
-const ActionButtonImg = tw.img`
+
+const ActionButtonImg = tw(Image)`
   h-10 
 `;
 
