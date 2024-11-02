@@ -16,7 +16,7 @@ const AboutSection = () => {
     <div className="min-h-screen">
       <div className="relative h-[60vh] bg-black">
         <div className="fixed top-6 left-6 z-50">
-          <Link href="/" className="inline-block">
+          <Link href="/" passHref>
             <button className="group flex items-center justify-center bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300">
               <ArrowLeft className="w-5 h-5 text-gray-700 group-hover:text-blue-600 transition-colors" />
             </button>
@@ -103,3 +103,4 @@ const AboutSection = () => {
 };
 
 export default AboutSection;
+  

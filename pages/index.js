@@ -10,6 +10,7 @@ import Navbar from "../components/Navbar";
 import Fleet from "../components/Fleet";
 import WhyChooseUs from "../components/WhuChooseUS";
 import Footer from "../components/Footer";
+import Image from 'next/image';
 
 // Typing Animation Component
 const TypingAnimation = () => {
