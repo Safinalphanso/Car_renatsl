@@ -256,7 +256,7 @@ export default function Home() {
           </div>
           <PopupContent>
             <CloseButton onClick={closePopup}>
-              <Image
+              <Img
                 className="h-4"
                 src="https://img.icons8.com/?size=512&id=46&format=png"
               />

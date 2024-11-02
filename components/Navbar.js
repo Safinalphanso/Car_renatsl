@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image';
 import React, { useState } from 'react'
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { MdEmail, MdLocationOn} from "react-icons/md";
@@ -16,7 +15,7 @@ function Navbar() {
   return (
     <div className="h-20 justify-between shadow-md border-b border-gray-600 flex items-center py-4 pr-4 pl-2">
     <div className="flex gap-1 justify-center items-center">
-      <Image src="https://shariandabre.github.io/CarRental_Master-V2/logo.png" className="w-20" />
+      <img src="https://shariandabre.github.io/CarRental_Master-V2/logo.png" className="w-20" />
       <h1 className="hidden md:block text-3xl anton ">
 CAR RENTAL
       </h1>

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Image from 'next/image';
 import tw from "tailwind-styled-components";
 import { carList } from "../data/carList";
 import { carList2 } from "../data/carList2";
@@ -115,7 +114,7 @@ const RideSelector = ({
           <PopupContent>
             <PopupHeader>Fare Breakup</PopupHeader>
             <CloseButton onClick={closePopup}>
-              <Image
+              <img
                 className="h-4"
                 src="https://img.icons8.com/?size=512&id=46&format=png"
                 alt="Close"
