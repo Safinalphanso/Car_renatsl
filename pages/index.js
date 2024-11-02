@@ -249,53 +249,6 @@ export default function Home() {
           Package={Package}
         />
       )}
-      {showPopup && (
-        <Popup>
-          <div className="h-14 text-lg rounded-t-lg flex font-medium justify-center items-center text-white max-w-md bg-[#0080FF] w-full md:w-5/6">
-            <h2>Select a option</h2>
-          </div>
-          <PopupContent>
-            <CloseButton onClick={closePopup}>
-              <Img
-                className="h-4"
-                src="https://img.icons8.com/?size=512&id=46&format=png"
-              />
-            </CloseButton>
-            <ActionButtons className="items-center">
-              <ActionButton
-                onClick={() => {
-                  setFormType("OutStation");
-                  handleclick();
-                  closePopup();
-                }}
-              >
-                <ActionButtonImg src="https://img.icons8.com/?size=512&id=GR0X8aZ3trYu&format=png" />
-                <Text>OutStation</Text>
-              </ActionButton>
-              <ActionButton
-                onClick={() => {
-                  setFormType("Local Transport");
-                  handleclick();
-                  closePopup();
-                }}
-              >
-                <ActionButtonImg src="https://img.icons8.com/?size=512&id=fsoiqMUp0O4v&format=png" />
-                <Text>Local Transport</Text>
-              </ActionButton>
-              <ActionButton
-                onClick={() => {
-                  setFormType("Airport");
-                  handleclick();
-                  closePopup();
-                }}
-              >
-                <ActionButtonImg src="https://img.icons8.com/?size=512&id=akvTP3kbVnLv&format=png" />
-                <Text>Airport(Pickup / dropoff)</Text>
-              </ActionButton>
-            </ActionButtons>
-          </PopupContent>
-        </Popup>
-      )}
       <FloatingCallButton className="FloatingCallButton">
         <Link href="tel:80109 55252">
           <FloatingCallIcon className="FloatingCallIcon" />

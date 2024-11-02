@@ -6,9 +6,11 @@ function Footer() {
     <footer className="bg-gray-800 text-gray-400 body-font border-t">
       <div className="container px-5 py-8 mx-auto flex flex-col sm:flex-row items-center justify-between">
         <a className="flex title-font font-medium items-center md:justify-start justify-center text-white">
-          <img
+          <Image
             src="https://shariandabre.github.io/CarRental_Master-V2/logo.png"
             alt="Car Rental Logo"
+            width={48} // Set appropriate width
+            height={48} // Set appropriate height
             className="w-12 h-12"
           />
           <span className="ml-3 text-xl">Car Rental</span>

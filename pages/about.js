@@ -86,7 +86,7 @@ const AboutSection = () => {
 
                 <div className="max-w-3xl mx-auto">
                   <p className="text-lg text-gray-700 leading-relaxed">
-                    <span className="font-bold text-gray-900">Welcome to RCR - Your Car Rental Solution</span>
+                    <span className="font-bold text-gray-900">Welcome to MCR - Your Car Rental Solution</span>
                     <br /><br />
                     Since 2015, we&apos;ve been your go-to platform for finding the best rates for car rentals. Our seamless booking process ensures instant confirmation, making your travel planning a breeze. Client satisfaction is our top priority, with dedicated support to assist you.
                     <br /><br />
@@ -103,4 +103,3 @@ const AboutSection = () => {
 };
 
 export default AboutSection;
-  

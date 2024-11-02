@@ -83,9 +83,11 @@ const TestimonialsSection = () => {
                   
                   <div className="flex items-center">
                     <div className="w-12 h-12 relative">
-                      <img
+                      <Image
                         alt={`${testimonial.author}&apos;s testimonial`}
                         src={testimonial.image}
+                        width={48} // Set width to match your layout
+                        height={48} // Set height to match your layout
                         className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
                         onError={(e) => {
                           e.target.src = "/api/placeholder/100/100"; // Fallback image
