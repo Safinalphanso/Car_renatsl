@@ -7,6 +7,7 @@ export const carList = [
     seaters: '6',
     index: 5,
     "4|40": 2500,
+    type:'MUV',
     extraHr: 250,
     extraKm: 25,
     airport: 1800
@@ -17,6 +18,7 @@ export const carList = [
     seaters: '6',
     index: 4,
     "4|40": 2200,
+    type:'MUV',
     extraHr: 200,
     extraKm: 20,
     airport: 1800
@@ -27,6 +29,7 @@ export const carList = [
     seaters: '6',
     index: 3,
     "4|40": 2000,
+    type:'MUV',
     extraHr: 180,
     extraKm: 18,
     airport: 1800
@@ -37,6 +40,7 @@ export const carList = [
     seaters: '4',
     index: 2,
     "4|40": 1600,
+    type:'sedan',
     extraHr: 140,
     extraKm: 14,
     airport: 1400
@@ -47,6 +51,7 @@ export const carList = [
     seaters: '4',
     index: 1,
     "4|40": 1600,
+    type:'sedan',
     extraHr: 140,
     extraKm: 14,
     airport: 1400

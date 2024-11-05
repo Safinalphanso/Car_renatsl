@@ -105,7 +105,7 @@ const RideSelector = ({
                   setPrice(calculatePrice(car));
                 }}
               >
-                Inquire
+                Book now
               </InquireButton>
             </CarCard>
           ))}
@@ -219,7 +219,7 @@ const PopupContent = tw.div`
 `;
 
 const PopupHeader = tw.div`
-  bg-[#AF302F] text-white text-lg font-medium p-4 rounded-t-lg
+  bg-[#0080ff] text-white text-lg font-medium p-4 rounded-t-lg
 `;
 
 const CloseButton = tw.button`
