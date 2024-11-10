@@ -19,6 +19,8 @@ const Confirm = ({
   formType,
   pickupTime,
   Package,
+  dropDate,
+  dropTime,
 }) => {
   const [booking, setBooking] = useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
@@ -53,6 +55,8 @@ const Confirm = ({
               days={days}
               rideDistance={rideDistance}
               setDistance={setDistance}
+              dropDate={dropDate}
+              dropTime={dropTime}
             />
           </RideContainer>
         </>
@@ -69,6 +73,8 @@ const Confirm = ({
             Package={Package}
             pickupDate={pickupDate}
             pickupTime={pickupTime}
+            dropDate={dropDate}
+            dropTime={dropTime}
             days={days}
             Price={Price}
             formType={formType}
@@ -83,7 +89,7 @@ const Confirm = ({
 export default Confirm;
 
 const Wrapper = tw.div`
-h-screen flex flex-col w-full
+min-h-screen flex flex-col w-full
 `;
 const RideContainer = tw.div`
 flex-1 flex flex-col h-1/2

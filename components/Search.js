@@ -24,7 +24,11 @@ function Search({
   getPickupCoordinates,
   getDropoffCoordinates,
   setpickupCoordinates,
-  setdropoffCoordinates
+  setdropoffCoordinates,
+  setDropDate,
+  dropDate,
+  dropTime,
+  setDropTime
 }) {
   const geocodingService = new geocoding({
     accessToken:
@@ -45,6 +49,8 @@ function Search({
         .forwardGeocode({
           query: input,
           limit: 5,
+          countries: ['in'],
+          types: ['place', 'address', 'poi'],
         })
         .send();
 
@@ -167,6 +173,18 @@ useEffect(()=>{
         ))}
       </div>
       <InputContainer onSubmit={handleconfirmTrip} >
+      <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
+      <select
+                    name="airport_name"
+                    id="airport_name"
+                    required
+                    className="form-control bg-[#f5f5f5] text-black w-full"
+                    
+                  >
+                    <option value="">Mumbai</option>
+                    
+                  </select>
+                  </div>
         {formType == "OutStation" && (
           <InputBoxes>
             <div className="flex gap-2">
@@ -180,6 +198,12 @@ useEffect(()=>{
     onChange={(e) => {
       setPickupInput(e.target.value);
       setShowPickupSuggestions(true);
+    }}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') {
+        setShowPickupSuggestions(false);
+        setPickup(pickupInput);
+      }
     }}
     required
   />
@@ -220,6 +244,12 @@ useEffect(()=>{
     onChange={(e) => {
       setDropoffInput(e.target.value);
       setShowDropoffSuggestions(true);
+    }}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') {
+        setShowDropoffSuggestions(false);
+        setDropoff(dropoffInput);
+      }
     }}
     required
   />
@@ -279,58 +309,110 @@ useEffect(()=>{
               </div>
             </div>
 
-            {tripType === "Round Trip" && (
-  <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
-  <select
-    name="days"
-    className="form-control bg-[#f5f5f5] text-black w-full"
-    id="duration"
-    onChange={(e) => setDays(e.target.value)}
-    required
-  >
-    <option value="0">Select Number of days</option>
-    <option value="1">Full Day</option>
-    <option value="2">2 Days</option>
-    <option value="3">3 Days</option>
-    <option value="4">4 Days</option>
-    <option value="5">5 Days</option>
-    <option value="6">6 Days</option>
-    <option value="7">7 Days</option>
-    <option value="8">8 Days</option>
-    <option value="9">9 Days</option>
-    <option value="10">10 Days</option>
-  </select>
-</div>
+            {tripType === "Round Trip" ? (
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <div className="flex btn1 p-2 rounded-md items-center justify-between gap-2">
+                      <MdDateRange size="20" />
+                      <input
+                        className="bg-[#f5f5f5] text-black w-full"
+                        placeholder="Start date"
+                        name="startDate"
+                        type="date"
+                        value={pickupDate}
+                        onChange={(e) => setPickupDate(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+                    <div className="flex btn1 p-2 rounded-md items-center justify-between gap-2">
+                      <BiTimeFive size="20" />
+                      <input
+                        name="pickup_time"
+                        onChange={(e) => setPickupTime(e.target.value)}
+                        type="time"
+                        className="bg-[#f5f5f5] text-black w-full"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <div className="flex btn1 p-2 rounded-md items-center justify-between gap-2">
+                      <MdDateRange size="20" />
+                      <input
+                        className="bg-[#f5f5f5] text-black w-full"
+                        placeholder="End date"
+                        name="endDate"
+                        type="date"
+                        value={dropDate}
+                        onChange={(e) => {
+                          setDropDate(e.target.value);
+                          const start = new Date(pickupDate);
+                          const end = new Date(e.target.value);
+                          const diffTime = Math.abs(end - start);
+                          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                          setDays(diffDays);
+                        }}
+                        min={pickupDate}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+                    <div className="flex btn1 p-2 rounded-md items-center justify-between gap-2">
+                      <BiTimeFive size="20" />
+                      <input
+                        name="dropoff_time"
+                        value={dropTime}
+                        onChange={(e) => setDropTime(e.target.value)}
+                        type="time"
+                        className="bg-[#f5f5f5] text-black w-full"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Date</label>
+                  <div className="flex btn1 p-2 rounded-md items-center justify-between gap-2">
+                    <MdDateRange size="20" />
+                    <input
+                      className="bg-[#f5f5f5] text-black w-full"
+                      placeholder="Pickup date"
+                      name="Pickdate"
+                      type="date"
+                      value={pickupDate || getCurrentDate()}
+                      onChange={(e) => setPickupDate(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Time</label>
+                  <div className="flex btn1 p-2 rounded-md items-center justify-between gap-2">
+                    <BiTimeFive size="20" />
+                    <input
+                      name="pickup_time"
+                      onChange={(e) => setPickupTime(e.target.value)}
+                      type="time"
+                      className="bg-[#f5f5f5] text-black w-full"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
             )}
-            <div className="flex  rounded-md items-center justify-between gap-2">
-              <div className="flex flex-1 btn1 p-2  rounded-md items-center justify-between gap-2">
-                <MdDateRange size="20" />
-                <input
-                  className="bg-[#f5f5f5] text-black w-full"
-                  placeholder="Pickup date"
-                  name="Pickdate"
-                  type="date"
-                  value={pickupDate || getCurrentDate()} // Set initial value to current date
-                  onChange={(e) => {
-                    setPickupDate(e.target.value);
-                  }}
-                  required
-                />
-              </div>
-              <div className="flex flex-1 btn1 p-2  rounded-md items-center justify-between gap-2">
-                <BiTimeFive size="20" />
-                <input
-                  name="pickup_time"
-                  onChange={(e) => {
-                    setPickupTime(e.target.value);
-                  }}
-                  type="time"
-                  className="bg-[#f5f5f5] text-black w-full"
-                  id="time_picker1"
-                  required
-                />
-              </div>
-            </div>
           </InputBoxes>
         )}
         {formType == "Local Transport" && (
@@ -346,6 +428,12 @@ useEffect(()=>{
     onChange={(e) => {
       setPickupInput(e.target.value);
       setShowPickupSuggestions(true);
+    }}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') {
+        setShowPickupSuggestions(false);
+        setPickup(pickupInput);
+      }
     }}
     required
   />
@@ -482,6 +570,12 @@ useEffect(()=>{
       setPickupInput(e.target.value);
       setShowPickupSuggestions(true);
     }}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') {
+        setShowPickupSuggestions(false);
+        setPickup(pickupInput);
+      }
+    }}
     required
   />
   {showPickupSuggestions && pickupSuggestions.length > 0 && (
@@ -559,6 +653,12 @@ useEffect(()=>{
     onChange={(e) => {
       setDropoffInput(e.target.value);
       setShowDropoffSuggestions(true);
+    }}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') {
+        setShowDropoffSuggestions(false);
+        setDropoff(dropoffInput);
+      }
     }}
     required
   />

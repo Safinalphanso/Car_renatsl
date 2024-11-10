@@ -13,11 +13,13 @@ const Booking = ({
   tripType,
   days,
   pickupDate,
+  pickupTime,
+  dropDate,
+  dropTime,
   Price,
   formType,
   Package,
   rideDistance,
-  pickupTime,
 }) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -112,19 +114,40 @@ const Booking = ({
                   Date & Time
                 </SectionTitle>
                 <DateTimeInfo>
-                  <InfoItem>
-                    <Label>Pickup Date:</Label>
-                    <Value>{pickupDate}</Value>
-                  </InfoItem>
-                  <InfoItem>
-                    <Label>Pickup Time:</Label>
-                    <Value>{pickupTime}</Value>
-                  </InfoItem>
-                  {days && (
-                    <InfoItem>
-                      <Label>Duration:</Label>
-                      <Value>{days} day(s)</Value>
-                    </InfoItem>
+                  {tripType === "Round Trip" ? (
+                    <>
+                      <InfoItem>
+                        <Label>Start Date:</Label>
+                        <Value>{pickupDate}</Value>
+                      </InfoItem>
+                      <InfoItem>
+                        <Label>Start Time:</Label>
+                        <Value>{pickupTime}</Value>
+                      </InfoItem>
+                      <InfoItem>
+                        <Label>End Date:</Label>
+                        <Value>{dropDate}</Value>
+                      </InfoItem>
+                      <InfoItem>
+                        <Label>End Time:</Label>
+                        <Value>{dropTime}</Value>
+                      </InfoItem>
+                      <InfoItem>
+                        <Label>Duration:</Label>
+                        <Value>{days} day(s)</Value>
+                      </InfoItem>
+                    </>
+                  ) : (
+                    <>
+                      <InfoItem>
+                        <Label>Pickup Date:</Label>
+                        <Value>{pickupDate}</Value>
+                      </InfoItem>
+                      <InfoItem>
+                        <Label>Pickup Time:</Label>
+                        <Value>{pickupTime}</Value>
+                      </InfoItem>
+                    </>
                   )}
                 </DateTimeInfo>
               </SummarySection>

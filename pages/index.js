@@ -60,6 +60,8 @@ export default function Home() {
   const [pickupCoordinates, setpickupCoordinates] = useState([0, 0]);
   const [dropoffCoordinates, setdropoffCoordinates] = useState([0, 0]);
   const [showPopup, setShowPopup] = useState(false);
+  const [dropDate, setDropDate] = useState("");
+  const [dropTime, setDropTime] = useState("");
 
   const handleclick = () => {
     setSearch(!search);
@@ -137,7 +139,7 @@ export default function Home() {
   };
 
   return (
-    <Wrapper className={`${search && !confirm ? "p-2 h-screen md:flex-row gap-2" : "p-0 h-auto"}`}>
+    <Wrapper className={`${search && !confirm ? "p-2 h-screen md:flex-row gap-2" : "p-0 min-h-screen"}`}>
       {!confirm && (
         <>
           <div
@@ -146,7 +148,7 @@ export default function Home() {
           >
             {!search && (
               <>
-                <div className="h-screen flex flex-col">
+                <div className={`h-screen flex flex-col`}>
                   <Navbar />
                   <div className="h-full w-full flex-1 flex items-center justify-center p-2 md:p-4">
                     <div 
@@ -221,6 +223,10 @@ export default function Home() {
                           getDropoffCoordinates={getDropoffCoordinates}
                           setpickupCoordinates={setpickupCoordinates}
                           setdropoffCoordinates={setdropoffCoordinates}
+                          dropDate={dropDate}
+                          setDropDate={setDropDate}
+                          dropTime={dropTime}
+                          setDropTime={setDropTime}
                         />
                       </div>
                     </div>
@@ -244,6 +250,8 @@ export default function Home() {
           tripType={tripType}
           pickupDate={pickupDate}
           pickupTime={pickupTime}
+          dropDate={dropDate}
+          dropTime={dropTime}
           days={days}
           formType={formType}
           Package={Package}

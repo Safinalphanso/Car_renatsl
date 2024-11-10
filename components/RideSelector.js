@@ -19,6 +19,8 @@ const RideSelector = ({
   days,
   rideDistance,
   setDistance,
+  dropDate,
+  dropTime,
 }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentCarList, setCurrentCarList] = useState(carList);
@@ -175,7 +177,7 @@ const CarGrid = tw.div`
 `;
 
 const CarCard = tw.div`
-  flex flex-col bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow duration-300 overflow-hidden
+  flex flex-col bg-white shadow-md rounded-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100
 `;
 
 const CarImage = tw.div`
@@ -183,31 +185,31 @@ const CarImage = tw.div`
 `;
 
 const CarInfo = tw.div`
-  p-4 flex flex-col flex-grow
+  p-5 flex flex-col flex-grow
 `;
 
 const CarService = tw.h3`
-  text-lg font-bold mb-1
+  text-lg font-bold mb-2 text-gray-800
 `;
 
 const CarSeats = tw.p`
-  text-sm mb-2
+  text-sm text-gray-600 mb-2
 `;
 
 const ExtraPrice = tw.p`
-  text-sm font-uber mb-2
+  text-sm text-gray-600 mb-2 font-medium
 `;
 
 const Price = tw.h4`
-  text-xl font-medium mb-2
+  text-2xl font-semibold mb-3 text-gray-900
 `;
 
 const FareDetailsButton = tw.button`
-  text-[#0080ff] rounded-lg px-4 py-2 mt-auto
+  text-blue-500 hover:text-blue-600 rounded-lg px-4 py-2 mt-auto transition-colors duration-200
 `;
 
 const InquireButton = tw.button`
-  bg-[#0080ff] text-white rounded-lg text-xl font-medium p-2 m-4
+  bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xl font-medium p-3 m-4 transition-colors duration-200
 `;
 
 const PopupOverlay = tw.div`
