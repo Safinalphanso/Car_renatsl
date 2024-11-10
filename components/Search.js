@@ -174,16 +174,15 @@ useEffect(()=>{
       </div>
       <InputContainer onSubmit={handleconfirmTrip} >
       <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
-      <select
+      <hi
                     name="airport_name"
                     id="airport_name"
                     required
                     className="form-control bg-[#f5f5f5] text-black w-full"
                     
                   >
-                    <option value="">Mumbai</option>
-                    
-                  </select>
+                    Mumbai
+                  </hi>
                   </div>
         {formType == "OutStation" && (
           <InputBoxes>
@@ -682,7 +681,7 @@ useEffect(()=>{
 
               </>
             )}
-            <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
+            {/* <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
               <select
                 className="form-control bg-[#f5f5f5] w-full"
                 name="trip_package"
@@ -693,7 +692,7 @@ useEffect(()=>{
                 <option value="">Select Package</option>
                 <option value="6|60">4 Hr/ 40 Kilometer</option>
               </select>
-            </div>
+            </div> */}
             <div className="flex  rounded-md items-center justify-between gap-2">
               <div className="flex flex-1 btn1 p-2  rounded-md items-center justify-between gap-2">
                 <MdDateRange size="20" />
