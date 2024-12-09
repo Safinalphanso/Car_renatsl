@@ -64,13 +64,19 @@ const RideSelector = ({
   };
 
   const calculatePrice = (car) => {
+    if (!car) return 0;
+    
     if (formType === "Airport") return car.airport;
-    if (formType === "Local Transport") return car[Package];
+    if (formType === "Local Transport" && Package) return car[Package];
     if (formType === "OutStation") {
-      if (tripType === "Round Trip") return (car.extraKm * 300 + 400) * days;
-      return rideDistance >= 500 ? car.extraKm * 300 + 800 : car.extraKm * 300 + 400;
+      if (tripType === "Round Trip" && days) {
+        return (car.extraKm * rideDistance + 400) * days;
+      }
+      return rideDistance >= 500 
+        ? car.extraKm * rideDistance + 800 
+        : car.extraKm * rideDistance + 400;
     }
-    return "";
+    return 0;
   };
 
   return (

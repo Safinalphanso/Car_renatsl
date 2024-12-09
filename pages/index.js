@@ -64,6 +64,20 @@ export default function Home() {
   const [dropTime, setDropTime] = useState("");
 
   const handleclick = () => {
+    if (search) {
+      // Reset states when going back
+      setPickup("");
+      setDropoff("");
+      setPackage("");
+      setTripType("One Way");
+      setDays("");
+      setPickupDate("");
+      setPickupTime("");
+      setDropDate("");
+      setDropTime("");
+      setpickupCoordinates([0, 0]);
+      setdropoffCoordinates([0, 0]);
+    }
     setSearch(!search);
   };
 
@@ -129,15 +143,6 @@ export default function Home() {
       );
     }
   }, [search]);
-
-  const openPopup = () => {
-    setShowPopup(true);
-  };
-
-  const closePopup = () => {
-    setShowPopup(false);
-  };
-
   return (
     <Wrapper className={`${search && !confirm ? "p-2 h-screen md:flex-row gap-2" : "p-0 min-h-screen"}`}>
       {!confirm && (
@@ -157,13 +162,28 @@ export default function Home() {
                     >
                       {/* Map Toggle Button */}
                       <button
-                        onClick={() => setIsMapFixed(!isMapFixed)}
-                        className="absolute top-4 right-4 z-20 bg-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-100 transition-colors duration-200 flex items-center gap-2"
+                      onClick={() => setIsMapFixed(!isMapFixed)}
+                        className="absolute top-[6px] left-[6px] z-20 flex items-center"
                       >
-                        <span className="material-icons">
-                          {isMapFixed ? 'map_off' : 'map'}
+                        <div className={`w-16 h-8 rounded-full relative transition-colors duration-300 ${
+                          isMapFixed ? 'bg-blue-500' : 'bg-gray-300'
+                        }`}>
+                          <div 
+                            className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                              isMapFixed ? 'translate-x-[34px]' : 'translate-x-1'
+                            }`}
+                          />
+                          <span className={`absolute inset-0 flex items-center text-xs transition-opacity duration-300 ${
+                            isMapFixed 
+                              ? 'text-white opacity-100 justify-start pl-2' 
+                              : 'text-gray-500 opacity-0 justify-end pr-2'
+                          }`}>
+                            {isMapFixed ? 'On' : 'Off'}
+                          </span>
+                        </div>
+                        <span className="ml-2 text-sm text-white-700">
+                          {isMapFixed ? 'Hide Map' : 'Show Map'}
                         </span>
-                        {isMapFixed ? "Hide Map" : "Show Map"}
                       </button>
 
                       <div className={`absolute inset-0 transition-opacity duration-500 rounded-lg ${

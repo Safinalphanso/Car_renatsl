@@ -29,6 +29,28 @@ const Confirm = ({
   const handlebooking = () => {
     setBooking(!booking);
   };
+  useEffect(() => {
+    if (selectedCar && rideDistance) {
+      const newPrice = calculatePrice(selectedCar);
+      setPrice(newPrice);
+    }
+  }, [selectedCar, rideDistance, tripType, days, Package]);
+
+  const calculatePrice = (car) => {
+    if (!car) return 0;
+    
+    if (formType === "Airport") return car.airport;
+    if (formType === "Local Transport" && Package) return car[Package];
+    if (formType === "OutStation") {
+      if (tripType === "Round Trip" && days) {
+        return (car.extraKm * rideDistance + 400) * days;
+      }
+      return rideDistance >= 500 
+        ? car.extraKm * rideDistance + 800 
+        : car.extraKm * rideDistance + 400;
+    }
+    return 0;
+  };
   return (
     <Wrapper>
       <Navbar />

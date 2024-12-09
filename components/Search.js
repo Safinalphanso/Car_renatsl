@@ -4,6 +4,46 @@ import geocoding from "@mapbox/mapbox-sdk/services/geocoding";
 import { MdDateRange } from "react-icons/md";
 import { MdLocationOn } from "react-icons/md";
 import { BiTimeFive } from "react-icons/bi";
+
+function convertTo24Hour(time12h) {
+  if (!time12h) return '';
+  
+  const [time, modifier] = time12h.split(' ');
+  let [hours, minutes] = time.split(':');
+  
+  // Convert hours to number for calculations
+  hours = parseInt(hours, 10);
+  
+  if (hours === 12) {
+    hours = 0;
+  }
+  
+  if (modifier === 'PM') {
+    hours = hours + 12;
+  }
+  
+  // Convert back to string and pad
+  const hoursStr = String(hours).padStart(2, '0');
+  return `${hoursStr}:${minutes}`;
+}
+
+function convertTo12Hour(time24h) {
+  if (!time24h) return '';
+  
+  const [hours, minutes] = time24h.split(':');
+  const hourNum = parseInt(hours, 10);
+  
+  if (hourNum === 0) {
+    return `12:${minutes} AM`;
+  } else if (hourNum < 12) {
+    return `${hourNum}:${minutes} AM`;
+  } else if (hourNum === 12) {
+    return `12:${minutes} PM`;
+  } else {
+    return `${hourNum - 12}:${minutes} PM`;
+  }
+}
+
 function Search({
   handleclick,
   handleconfirm,
@@ -43,6 +83,9 @@ function Search({
   const [dropoffInput, setDropoffInput] = useState('');
   const [showPickupSuggestions, setShowPickupSuggestions] = useState(false);
   const [showDropoffSuggestions, setShowDropoffSuggestions] = useState(false);
+  const [pickupTime12h, setPickupTime12h] = useState('');
+  const [dropTime12h, setDropTime12h] = useState('');
+
   const fetchSuggestions = async (input, setter) => {
     try {
       const response = await geocodingService
@@ -76,18 +119,18 @@ function Search({
   }, [dropoffInput]);
 
   useEffect(()=>{
-setFormType(activeTab)
+    setFormType(activeTab)
   },[])
 
-useEffect(()=>{      
-  setpickupCoordinates([0, 0]);
-  setdropoffCoordinates([0, 0]);
-  setPickup("");
-  setPackage("");
-  setDropoff("");
-  setTripType("Round Trip");
-  setDays("");
-},[activeTab])
+  useEffect(()=>{      
+    setpickupCoordinates([0, 0]);
+    setdropoffCoordinates([0, 0]);
+    setPickup("");
+    setPackage("");
+    setDropoff("");
+    setTripType("Round Trip");
+    setDays("");
+  },[activeTab])
 
   useEffect(() => {
     if (pickupInput !== "" && dropoffInput !== "") {
@@ -96,12 +139,12 @@ useEffect(()=>{
     } else if (pickupInput !== "" && Package !== "") {
       getPickupCoordinates(pickupInput);
     }
-
   }, [pickupInput, dropoffInput, Package]);
 
   const handleTripTypeChange = (event) => {
     setTripType(event.target.value);
   };
+
   function getCurrentDate() {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -109,6 +152,19 @@ useEffect(()=>{
     const day = String(currentDate.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   }
+
+  // Modify the setPickupTime to convert 12h to 24h when setting
+  const handlePickupTimeChange = (time12h) => {
+    setPickupTime12h(time12h);
+    setPickupTime(convertTo24Hour(time12h));
+  };
+
+  // Modify the setDropTime to convert 12h to 24h when setting
+  const handleDropTimeChange = (time12h) => {
+    setDropTime12h(time12h);
+    setDropTime(convertTo24Hour(time12h));
+  };
+
   const getUserCurrentLocation = () => {
     const confirmAccess = window.confirm(
       "This website wants to access your current location. Allow access?"
@@ -119,7 +175,6 @@ useEffect(()=>{
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
-            // Use Mapbox's reverse geocoding to get the location name from latitude and longitude
             geocodingService
               .reverseGeocode({
                 query: [longitude, latitude],
@@ -156,7 +211,6 @@ useEffect(()=>{
 
   return (
     <Wapper>
-
       <div className="flex mb-6 bg-gray-100 p-1 rounded-lg">
         {['OutStation', 'Local Transport', 'Airport'].map((tab) => (
           <button
@@ -330,13 +384,29 @@ useEffect(()=>{
                     <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
                     <div className="flex btn1 p-2 rounded-md items-center justify-between gap-2">
                       <BiTimeFive size="20" />
-                      <input
+                      <select
                         name="pickup_time"
-                        onChange={(e) => setPickupTime(e.target.value)}
-                        type="time"
+                        onChange={(e) => handlePickupTimeChange(e.target.value)}
                         className="bg-[#f5f5f5] text-black w-full"
                         required
-                      />
+                      >
+                        <option value="">Select Time</option>
+                        {[...Array(12)].map((_, hour) => 
+                          ['AM', 'PM'].map(modifier => {
+                            const displayHour = hour === 0 ? 12 : hour;
+                            return (
+                              <>
+                                <option value={`${displayHour}:00 ${modifier}`}>
+                                  {displayHour}:00 {modifier}
+                                </option>
+                                <option value={`${displayHour}:30 ${modifier}`}>
+                                  {displayHour}:30 {modifier}
+                                </option>
+                              </>
+                            );
+                          })
+                        )}
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -368,14 +438,29 @@ useEffect(()=>{
                     <label className="block text-sm font-medium text-gray-700 mb-1">End Time</label>
                     <div className="flex btn1 p-2 rounded-md items-center justify-between gap-2">
                       <BiTimeFive size="20" />
-                      <input
-                        name="dropoff_time"
-                        value={dropTime}
-                        onChange={(e) => setDropTime(e.target.value)}
-                        type="time"
+                      <select
+                        name="dropTime12h"
+                        onChange={(e) => handleDropTimeChange(e.target.value)}
                         className="bg-[#f5f5f5] text-black w-full"
                         required
-                      />
+                      >
+                        <option value="">Select Time</option>
+                        {[...Array(12)].map((_, hour) => 
+                          ['AM', 'PM'].map(modifier => {
+                            const displayHour = hour === 0 ? 12 : hour;
+                            return (
+                              <>
+                                <option value={`${displayHour}:00 ${modifier}`}>
+                                  {displayHour}:00 {modifier}
+                                </option>
+                                <option value={`${displayHour}:30 ${modifier}`}>
+                                  {displayHour}:30 {modifier}
+                                </option>
+                              </>
+                               );
+                              })
+                            )}
+                          </select>
                     </div>
                   </div>
                 </div>
@@ -401,13 +486,29 @@ useEffect(()=>{
                   <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Time</label>
                   <div className="flex btn1 p-2 rounded-md items-center justify-between gap-2">
                     <BiTimeFive size="20" />
-                    <input
-                      name="pickup_time"
-                      onChange={(e) => setPickupTime(e.target.value)}
-                      type="time"
-                      className="bg-[#f5f5f5] text-black w-full"
-                      required
-                    />
+                    <select
+                        name="pickup_time"
+                        onChange={(e) => handlePickupTimeChange(e.target.value)}
+                        className="bg-[#f5f5f5] text-black w-full"
+                        required
+                      >
+                        <option value="">Select Time</option>
+                        {[...Array(12)].map((_, hour) => 
+                          ['AM', 'PM'].map(modifier => {
+                            const displayHour = hour === 0 ? 12 : hour;
+                            return (
+                              <>
+                                <option value={`${displayHour}:00 ${modifier}`}>
+                                  {displayHour}:00 {modifier}
+                                </option>
+                                <option value={`${displayHour}:30 ${modifier}`}>
+                                  {displayHour}:30 {modifier}
+                                </option>
+                              </>
+                            );
+                          })
+                        )}
+                      </select>
                   </div>
                 </div>
               </div>
@@ -495,16 +596,29 @@ useEffect(()=>{
               </div>
               <div className="flex flex-1 btn1 p-2  rounded-md items-center justify-between gap-2">
                 <BiTimeFive size="20" />
-                <input
-                  name="pickup_time"
-                  onChange={(e) => {
-                    setPickupTime(e.target.value);
-                  }}
-                  type="time"
-                  className="bg-[#f5f5f5] text-black w-full"
-                  id="time_picker1"
-                  required
-                />
+                <select
+                        name="pickup_time"
+                        onChange={(e) => handlePickupTimeChange(e.target.value)}
+                        className="bg-[#f5f5f5] text-black w-full"
+                        required
+                      >
+                        <option value="">Select Time</option>
+                        {[...Array(12)].map((_, hour) => 
+                          ['AM', 'PM'].map(modifier => {
+                            const displayHour = hour === 0 ? 12 : hour;
+                            return (
+                              <>
+                                <option value={`${displayHour}:00 ${modifier}`}>
+                                  {displayHour}:00 {modifier}
+                                </option>
+                                <option value={`${displayHour}:30 ${modifier}`}>
+                                  {displayHour}:30 {modifier}
+                                </option>
+                              </>
+                            );
+                          })
+                        )}
+                      </select>
               </div>
             </div>
           </InputBoxes>
@@ -625,7 +739,7 @@ useEffect(()=>{
             )}
             {tripType === "Pickup from Airport" && (
               <>
-                <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
+                <div className="flex gap-6 btn1 p-2 rounded-md h-12 items-center">
                   <select
                     name="airport_name"
                     id="airport_name"
@@ -643,42 +757,42 @@ useEffect(()=>{
                   </select>
                 </div>
 
-                <Input
-    placeholder="Enter location"
-    value={dropoffInput}
-    autoComplete="off"
-    list="dropoff-suggestions"
-    className="w-full"
-    onChange={(e) => {
-      setDropoffInput(e.target.value);
-      setShowDropoffSuggestions(true);
-    }}
-    onKeyDown={(e) => {
-      if (e.key === 'Enter') {
-        setShowDropoffSuggestions(false);
-        setDropoff(dropoffInput);
-      }
-    }}
-    required
-  />
-  {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
-    <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-      {dropoffSuggestions.map((suggestion, index) => (
-        <div
-          key={index}
-          className="p-2 hover:bg-gray-100 cursor-pointer"
-          onClick={() => {
-            setDropoffInput(suggestion);
-            setDropoff(suggestion);
-            setShowDropoffSuggestions(false);
-          }}
-        >
-          {suggestion}
-        </div>
-      ))}
-    </div>
-  )}
-
+                <div className="relative w-full">
+                  <Input
+                    placeholder="Enter drop location"
+                    value={dropoffInput}
+                    autoComplete="off"
+                    className="w-full"
+                    onChange={(e) => {
+                      setDropoffInput(e.target.value);
+                      setShowDropoffSuggestions(true);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        setShowDropoffSuggestions(false);
+                        setDropoff(dropoffInput);
+                      }
+                    }}
+                    required
+                  />
+                  {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
+                    <div className="absolute left-0 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto z-[100]" style={{ top: 'calc(100% + 4px)' }}>
+                      {dropoffSuggestions.map((suggestion, index) => (
+                        <div
+                          key={index}
+                          className="p-2 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => {
+                            setDropoffInput(suggestion);
+                            setDropoff(suggestion);
+                            setShowDropoffSuggestions(false);
+                          }}
+                        >
+                          {suggestion}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </>
             )}
             {/* <div className="flex gap-6 btn1 p-2  rounded-md h-12 items-center">
@@ -710,21 +824,34 @@ useEffect(()=>{
               </div>
               <div className="flex flex-1 btn1 p-2  rounded-md items-center justify-between gap-2">
                 <BiTimeFive size="20" />
-                <input
-                  name="pickup_time"
-                  onChange={(e) => {
-                    setPickupTime(e.target.value);
-                  }}
-                  type="time"
-                  className="bg-[#f5f5f5] text-black w-full"
-                  id="time_picker1"
-                  required
-                />
+                <select
+                        name="pickup_time"
+                        onChange={(e) => handlePickupTimeChange(e.target.value)}
+                        className="bg-[#f5f5f5] text-black w-full"
+                        required
+                      >
+                        <option value="">Select Time</option>
+                        {[...Array(12)].map((_, hour) => 
+                          ['AM', 'PM'].map(modifier => {
+                            const displayHour = hour === 0 ? 12 : hour;
+                            return (
+                              <>
+                                <option value={`${displayHour}:00 ${modifier}`}>
+                                  {displayHour}:00 {modifier}
+                                </option>
+                                <option value={`${displayHour}:30 ${modifier}`}>
+                                  {displayHour}:30 {modifier}
+                                </option>
+                              </>
+                            );
+                          })
+                        )}
+                      </select>
               </div>
             </div>
           </InputBoxes>
         )}
-        <ConfirmBtn type="submit" value="Confirm Location" />
+        <ConfirmBtn type="submit" value="Proceed Booking" />
       </InputContainer>
     </Wapper>
   );
