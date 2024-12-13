@@ -88,19 +88,22 @@ function Search({
 
   const fetchSuggestions = async (input, setter) => {
     try {
-      const response = await geocodingService
-        .forwardGeocode({
-          query: input,
-          limit: 5,
-          countries: ['in'],
-          types: ['place', 'address', 'poi'],
+      const response = await fetch('https://apisavis.avis.co.in/getDropAddresses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          eloccode: "2YZFFW",
+          prefixtext: input,
+          transfertype: "outstation"
         })
-        .send();
+      });
 
-      const suggestions = response.body.features.map(
-        (feature) => feature.place_name
-      );
-      setter(suggestions);
+      const data = await response.json();
+      if (data.resultCode === "200" && data.result) {
+        setter(data.result);
+      }
     } catch (error) {
       console.log("Error fetching suggestions:", error);
     }
@@ -175,21 +178,30 @@ function Search({
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
-            geocodingService
-              .reverseGeocode({
-                query: [longitude, latitude],
-                limit: 1,
+            // Use the Avis API to get the nearest location
+            fetch('https://apisavis.avis.co.in/getDropAddresses', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                eloccode: "2YZFFW",
+                prefixtext: "current",
+                transfertype: "outstation"
               })
-              .send()
-              .then((response) => {
-                const locationName =
-                  response.body.features[0].place_name || "Unknown Location";
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.resultCode === "200" && data.result && data.result.length > 0) {
+                const locationName = data.result[0].split(',')[0];
                 setCurrentLocation(locationName);
+                setPickupInput(locationName);
                 setPickup(locationName);
-              })
-              .catch((error) => {
-                console.log("Error fetching current location:", error);
-              });
+              }
+            })
+            .catch(error => {
+              console.log("Error fetching location name:", error);
+            });
           },
           (error) => {
             console.log("Error getting current location:", error);
@@ -203,11 +215,24 @@ function Search({
     }
   };
 
-  const handleconfirmTrip = () => {
-    setPickup(pickupInput)
-    setDropoff(dropoffInput)
-    handleconfirm()
-  }
+  const handleconfirmTrip = (e) => {
+    e.preventDefault();
+    if (formType === "OutStation") {
+      setPickup(pickupInput);
+      setDropoff(dropoffInput);
+    } else if (formType === "Local Transport") {
+      setPickup(pickupInput);
+    } else if (formType === "Airport") {
+      if (tripType === "Drop at Airport") {
+        setPickup(pickupInput);
+        setDropoff(dropoffInput);
+      } else {
+        setPickup(pickupInput);
+        setDropoff(dropoffInput);
+      }
+    }
+    handleconfirm();
+  };
 
   return (
     <Wapper>
@@ -246,8 +271,7 @@ function Search({
     placeholder="Enter pickup location"
     className="flex-1 w-full"
     value={pickupInput}
-    autoComplete="address-line1"
-    list="pickup-suggestions"
+    autoComplete="off"
     onChange={(e) => {
       setPickupInput(e.target.value);
       setShowPickupSuggestions(true);
@@ -262,19 +286,23 @@ function Search({
   />
   {showPickupSuggestions && pickupSuggestions.length > 0 && (
     <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-      {pickupSuggestions.map((suggestion, index) => (
-        <div
-          key={index}
-          className="p-2 hover:bg-gray-100 cursor-pointer"
-          onClick={() => {
-            setPickupInput(suggestion);
-            setPickup(suggestion);
-            setShowPickupSuggestions(false);
-          }}
-        >
-          {suggestion}
-        </div>
-      ))}
+      {pickupSuggestions.map((suggestion, index) => {
+        // Extract the main location name before the comma
+        const locationName = suggestion;
+        return (
+          <div
+            key={index}
+            className="p-2 hover:bg-gray-100 cursor-pointer"
+            onClick={() => {
+              setPickupInput(locationName);
+              setPickup(locationName);
+              setShowPickupSuggestions(false);
+            }}
+          >
+            {suggestion}
+          </div>
+        );
+      })}
     </div>
   )}
 </div>
@@ -292,7 +320,6 @@ function Search({
     placeholder="Where to?"
     value={dropoffInput}
     autoComplete="off"
-    list="dropoff-suggestions"
     className="w-full"
     onChange={(e) => {
       setDropoffInput(e.target.value);
@@ -308,19 +335,23 @@ function Search({
   />
   {showDropoffSuggestions && dropoffSuggestions.length > 0 && (
     <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-      {dropoffSuggestions.map((suggestion, index) => (
-        <div
-          key={index}
-          className="p-2 hover:bg-gray-100 cursor-pointer"
-          onClick={() => {
-            setDropoffInput(suggestion);
-            setDropoff(suggestion);
-            setShowDropoffSuggestions(false);
-          }}
-        >
-          {suggestion}
-        </div>
-      ))}
+      {dropoffSuggestions.map((suggestion, index) => {
+        // Extract the main location name before the comma
+        const locationName = suggestion.split(',')[0];
+        return (
+          <div
+            key={index}
+            className="p-2 hover:bg-gray-100 cursor-pointer"
+            onClick={() => {
+              setDropoffInput(locationName);
+              setDropoff(locationName);
+              setShowDropoffSuggestions(false);
+            }}
+          >
+            {suggestion}
+          </div>
+        );
+      })}
     </div>
   )}
 </div>
@@ -523,8 +554,7 @@ function Search({
     placeholder="Enter pickup location"
     className="flex-1 w-full"
     value={pickupInput}
-    autoComplete="address-line1"
-    list="pickup-suggestions"
+    autoComplete="off"
     onChange={(e) => {
       setPickupInput(e.target.value);
       setShowPickupSuggestions(true);
@@ -539,19 +569,23 @@ function Search({
   />
   {showPickupSuggestions && pickupSuggestions.length > 0 && (
     <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-      {pickupSuggestions.map((suggestion, index) => (
-        <div
-          key={index}
-          className="p-2 hover:bg-gray-100 cursor-pointer"
-          onClick={() => {
-            setPickupInput(suggestion);
-            setPickup(suggestion);
-            setShowPickupSuggestions(false);
-          }}
-        >
-          {suggestion}
-        </div>
-      ))}
+      {pickupSuggestions.map((suggestion, index) => {
+        // Extract the main location name before the comma
+        const locationName = suggestion.split(',')[0];
+        return (
+          <div
+            key={index}
+            className="p-2 hover:bg-gray-100 cursor-pointer"
+            onClick={() => {
+              setPickupInput(locationName);
+              setPickup(locationName);
+              setShowPickupSuggestions(false);
+            }}
+          >
+            {suggestion}
+          </div>
+        );
+      })}
     </div>
   )}
 </div>
@@ -677,8 +711,7 @@ function Search({
     placeholder="Enter pickup location"
     className="flex-1 w-full"
     value={pickupInput}
-    autoComplete="address-line1"
-    list="pickup-suggestions"
+    autoComplete="off"
     onChange={(e) => {
       setPickupInput(e.target.value);
       setShowPickupSuggestions(true);
@@ -693,19 +726,23 @@ function Search({
   />
   {showPickupSuggestions && pickupSuggestions.length > 0 && (
     <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-      {pickupSuggestions.map((suggestion, index) => (
-        <div
-          key={index}
-          className="p-2 hover:bg-gray-100 cursor-pointer"
-          onClick={() => {
-            setPickupInput(suggestion);
-            setPickup(suggestion);
-            setShowPickupSuggestions(false);
-          }}
-        >
-          {suggestion}
-        </div>
-      ))}
+      {pickupSuggestions.map((suggestion, index) => {
+        // Extract the main location name before the comma
+        const locationName = suggestion.split(',')[0];
+        return (
+          <div
+            key={index}
+            className="p-2 hover:bg-gray-100 cursor-pointer"
+            onClick={() => {
+              setPickupInput(locationName);
+              setPickup(locationName);
+              setShowPickupSuggestions(false);
+            }}
+          >
+            {suggestion}
+          </div>
+        );
+      })}
     </div>
   )}
 </div>
